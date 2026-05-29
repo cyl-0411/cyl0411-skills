@@ -1,0 +1,4 @@
+interface:
+  display_name: "Innovus Command Lookup"
+  short_description: "Look up Innovus command usage from the local manual."
+  default_prompt: "Look up Innovus command usage from the local manual and summarize syntax, options, examples, and caveats."

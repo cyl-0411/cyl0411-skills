@@ -1,0 +1,4 @@
+interface:
+  display_name: "Read QEC Paper"
+  short_description: "Extract QEC decoder and hardware metrics to Markdown."
+  default_prompt: "Use $read-qec-paper to read this QEC paper and produce a structured Markdown note with a summary table."
