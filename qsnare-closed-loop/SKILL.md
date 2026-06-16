@@ -1,0 +1,63 @@
+---
+name: qsnare-closed-loop
+description: Run Q-SNARE model evaluation through a closed loop of model metrics, QEC simulation, PyMatching decoding, feedback, cleanup, and git handoff. Use when working on Q-Whisperer/Q-SNARE training runs, noise-model adjustment, closed-loop LER validation, aggressive noise injection, or deciding whether a model iteration is good enough to commit and push.
+---
+
+# Q-SNARE Closed Loop
+
+## Overview
+
+Use the actual QEC decoding outcome as the primary success signal. Classification AP/F1 is useful for diagnosis, but a model is only effective when model-adjusted PyMatching improves logical error rate versus raw PyMatching.
+
+## Workflow
+
+1. Inspect the current state before running anything expensive:
+   - `git status --short`
+   - latest `model/figures/experiment_comparison.csv`
+   - latest `model/figures/<experiment>/baseline_comparison.json`
+   - latest `model/figures/<experiment>/selective_operating_point*.json`
+   - latest `simulation/results/**/feedback.json` or `summary.json`
+
+2. Prefer the workflow CLI when available:
+
+```powershell
+python -m simulation.run_closed_loop_workflow `
+  --model-config model/configs/20k_w32_zscore_extreme.yaml `
+  --instances 100 --shots-per-instance 1000 `
+  --hotspot-multiplier-min 100 --hotspot-multiplier-max 100 `
+  --device auto --num-workers auto
+```
+
+3. Use aggressive noise scans when classifier metrics look good but QEC LER is not improving:
+   - `100x-100x` for a controlled strong-hotspot check.
+   - `100x-1000x` for stress testing.
+   - Keep `instances` and `shots-per-instance` small for smoke tests, then scale only after the pipeline is green.
+
+4. Treat the existing `simulation/` package as QEC-SIM unless the user provides an external simulator path. It uses Stim for detector sampling and PyMatching for decoding.
+
+## Success Criteria
+
+- Primary: `LER(noisy_model_adjusted_pm) < LER(noisy_raw_pm)`.
+- Strong success: model-adjusted LER improves raw PM by at least 10% and the difference is larger than about two combined standard errors.
+- "Correctness improves" means logical success rate increases; report both success rate and LER, but make LER the decision metric.
+- If AP/F1 is high but QEC LER regresses, do not call the model good. Tune policy mapping, action threshold, and decoder hotspot multiplier first.
+
+## Resource Policy
+
+- Use GPU for training and model inference when CUDA is available.
+- Use CPU workers conservatively for data loading and simulation orchestration; do not saturate all cores by default.
+- Keep GPU memory headroom. If CUDA OOM occurs, reduce batch size and retry before changing model code.
+- For large QEC runs, increase `instances` and `shots-per-instance` gradually. Avoid holding all detector samples in memory.
+
+## Logs and Artifacts
+
+- Prefer structured small artifacts: `feedback.json`, `feedback.md`, `summary.json`, `instances.csv`.
+- Compress workflow logs to `run.log.gz` and delete raw `run.log`.
+- Keep only recent workflow run directories for the same experiment unless the user asks to preserve a run.
+- Do not delete historical training logs or checkpoints unless the user explicitly requests cleanup or passes a cleanup flag.
+
+## Git Handoff
+
+- Commit code changes after tests pass.
+- Push model-iteration results only when the closed-loop QEC result meets the strong success criterion.
+- Stage only files related to the current workflow; avoid mixing unrelated dirty worktree changes into the commit.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Digital IC Backend Debug"
+  short_description: "Diagnose IC backend issues from local docs and Innovus manual"
+  default_prompt: "Use $digital-ic-backend-debug to diagnose this IC backend issue from the local wiki and confirm any Innovus commands against the local manual."
