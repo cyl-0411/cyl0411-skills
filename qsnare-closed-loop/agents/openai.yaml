@@ -1,4 +1,0 @@
-interface:
-  display_name: "Q-SNARE Closed Loop"
-  short_description: "Run Q-SNARE model evaluation through QEC simulation feedback."
-  default_prompt: "Use Q-SNARE closed-loop workflow to evaluate the latest model and recommend the next adjustment."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "IC Backend CV"
+  short_description: "审校和改写数字 IC 后端岗位中文简历"
+  default_prompt: "Use $ic-backend-cv to revise this resume for a digital IC backend role."
