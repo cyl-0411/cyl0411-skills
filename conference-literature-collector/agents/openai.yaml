@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "Conference Literature Collector"
+  short_description: "收集会议论文、下载全文、筛选 QEC/量子候选并生成归档报告"
+  default_prompt: "Use $conference-literature-collector to collect conference papers, download PDFs with isolated browser proxy, and screen QEC-related work."
