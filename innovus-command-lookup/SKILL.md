@@ -1,6 +1,6 @@
 ---
 name: innovus-command-lookup
-description: Look up Cadence Innovus command usage from a local Innovus Text Command Reference, especially when the user asks how to use Innovus commands, options, examples, command order, or related PnR flow commands. Use when files such as innovus_manual.txt, innovus命令手册.pdf, or docs/innovus_flow_commands are available or when the user asks to search the Innovus command manual.
+description: Look up Cadence Innovus command usage from a local Innovus Text Command Reference, especially when the user asks how to use Innovus commands, options, examples, command order, or related PnR flow commands. This is a pure command lookup skill — syntax, options, and usage examples only, not for diagnosing concrete errors or design problems (use digital-ic-backend-debug for those). Use when files such as innovus_manual.txt, innovus命令手册.pdf, or docs/innovus_flow_commands are available or when the user asks to search the Innovus command manual.
 ---
 
 # Innovus Command Lookup

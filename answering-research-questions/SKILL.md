@@ -1,7 +1,7 @@
 ---
 name: Answering Research Questions
 description: Main orchestration workflow for systematic literature research - search, evaluate, traverse, synthesize
-when_to_use: When user asks a research question. When user wants to find specific data in literature. When starting comprehensive literature review. When user says "find papers about" or "what is known about".
+when_to_use: When the task needs a complete systematic research workflow - multiple phases, a research session directory, and synthesis across many sources. When starting comprehensive literature review. When user says "find papers about" or "what is known about". For a one-shot PubMed search, use searching-literature instead.
 version: 1.0.0
 ---
 

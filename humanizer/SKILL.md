@@ -2,8 +2,9 @@
 name: humanizer
 version: 2.8.0
 description: |
-  Remove signs of AI-generated writing from text. Use when editing or reviewing
-  text to make it sound more natural and human-written. Based on Wikipedia's
+  Remove signs of AI-generated writing from English text. Use when editing or
+  reviewing English text to make it sound more natural and human-written; use
+  humanizer-zh for Chinese text. Based on Wikipedia's
   comprehensive "Signs of AI writing" guide. Detects and fixes patterns including:
   inflated symbolism, promotional language, superficial -ing analyses, vague
   attributions, em dash overuse, rule of three, AI vocabulary words, passive

@@ -1,7 +1,7 @@
 ---
 name: Getting Started with Research Superpowers
-description: Introduction to literature search & review skills - systematic paper finding, screening, extraction, and citation traversal
-when_to_use: At start of each Claude Code session. When user asks literature search questions. When searching scientific literature. When reviewing papers or citations.
+description: Entry point and router for the literature search & review skill family - systematic paper finding, screening, extraction, and citation traversal
+when_to_use: At the start of a session, or when you are unsure which literature skill to use and need routing to the right one. Not for executing a specific search itself.
 version: 1.1.0
 ---
 

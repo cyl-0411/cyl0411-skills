@@ -1,7 +1,7 @@
 ---
 name: Searching Scientific Literature
-description: PubMed search with keyword optimization, result parsing, and metadata extraction
-when_to_use: When starting literature search. When user asks about papers, publications, studies. When need to find scientific articles. When building initial paper list for research question.
+description: One-shot PubMed search with keyword optimization, result parsing, and metadata extraction
+when_to_use: When you only need to run a single PubMed search. For multi-source search or when MCP tools (PubMed, CrossRef, arXiv) are configured, use nature-academic-search instead. For a full multi-phase research workflow, use answering-research-questions.
 version: 1.0.0
 ---
 

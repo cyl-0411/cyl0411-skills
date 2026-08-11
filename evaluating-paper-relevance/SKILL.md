@@ -1,7 +1,7 @@
 ---
 name: Evaluating Paper Relevance
-description: Two-stage paper screening - abstract scoring then deep dive for specific data extraction
-when_to_use: After literature search returns results. When need to determine if paper contains specific data. When screening papers for relevance. When extracting methods, results, data from papers.
+description: Methodology for single-paper screening scoring and deep-dive workflow (abstract scoring then data extraction); applies at any scale, independent of batch size.
+when_to_use: After literature search returns results. When need to determine if a single paper contains specific data. When screening papers for relevance one by one, at any scale. When extracting methods, results, data from papers.
 version: 1.0.0
 ---
 

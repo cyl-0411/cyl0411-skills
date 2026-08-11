@@ -2,7 +2,7 @@
 name: survey-director
 description: >
   综述总监 (Survey Director) — 负责AI/ML前沿综述论文的选题规划、大纲设计、
-  任务分配与终审。当用户提出综述写作需求时激活。协调 5 个 Agent 完成从选题到终稿的全流程。
+  任务分配与终审。仅当用户提出综述(survey/review)类写作需求时激活，不适用于原创研究论文的规划。协调 5 个 Agent 完成从选题到终稿的全流程。
 metadata:
   author: 研究主管
   version: "1.0.0"

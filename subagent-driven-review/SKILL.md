@@ -1,7 +1,7 @@
 ---
 name: Subagent-Driven Literature Review
-description: Use parallel subagents for large-scale paper screening and deep dive analysis
-when_to_use: Large literature searches (50+ papers), parallel paper screening, deep dive analysis on multiple papers, citation network exploration, when main context is getting full
+description: Use parallel subagents to accelerate large-scale paper screening and deep dive analysis. Only when you decide to parallelize with subagents, or when main context is getting full.
+when_to_use: Only when deciding to use parallel subagents to accelerate large-scale screening/deep dive (typically 50+ papers), or when main context is getting full and needs offloading. Not for general single-paper screening methodology.
 version: 1.0.0
 ---
 

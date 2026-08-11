@@ -4,7 +4,8 @@ description: >
   AI-driven multi-format SVG content generation system. Converts source documents
   (PDF/DOCX/URL/Markdown) into high-quality SVG pages and exports to PPTX through
   multi-role collaboration. Use when user asks to "create PPT", "make presentation",
-  "生成PPT", "做PPT", "制作演示文稿", or mentions "ppt-master".
+  "生成PPT", "做PPT", "制作演示文稿", or mentions "ppt-master". 论文汇报场景
+  （journal club/组会）见 nature-paper2ppt。
 ---
 
 # PPT Master Skill

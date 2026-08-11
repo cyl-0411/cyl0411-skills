@@ -4,8 +4,10 @@ description: >-
   Multi-source literature search, citation verification, MeSH search strategy,
   citation file management (.nbib/.ris/.bib conversion), and reference management
   (BibTeX, related articles, ID conversion) via MCP tools (PubMed, CrossRef, arXiv).
-  Use when the user needs coordinated multi-step literature workflows beyond a
-  single MCP call.
+  Positioned as the MCP-tool-driven multi-source search and citation management
+  workflow. Use when the user needs coordinated multi-step literature workflows
+  beyond a single MCP call; a quick single-paper PubMed lookup does not need it
+  (use searching-literature).
 ---
 
 # Academic Search

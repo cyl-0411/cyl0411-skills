@@ -5,3 +5,9 @@ __pycache__/
 .DS_Store
 Thumbs.db
 *.pyc
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+web-access/config.env
