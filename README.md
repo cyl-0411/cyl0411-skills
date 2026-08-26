@@ -2,12 +2,13 @@
 
 Personal Codex skills synced from `C:\Users\CYL04\.codex\skills`.
 
-Synced on 2026-06-24.
+Synced on 2026-08-27.
 
 ## Included skills
 
 - `academic-paper-composer`
 - `academic-paper-strategist`
+- `academic-research-suite`
 - `answering-research-questions`
 - `architecture-diagram`
 - `building-screening-rubrics`
