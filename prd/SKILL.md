@@ -1,6 +1,6 @@
 ---
 name: prd
-description: Create and save a local Markdown PRD for a product or feature without implementing it. Use to-prd only when the user explicitly wants publication to an issue tracker.
+description: Create and save a local Markdown PRD for a product or feature without implementing it or publishing it to an external issue tracker.
 ---
 
 # PRD Generator

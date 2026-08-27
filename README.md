@@ -31,14 +31,8 @@ Last synchronized: 2026-08-27.
 - `prd`
 - `prototype`
 - `qsnare-closed-loop`
-- `ralph`
-- `ralph-autonomous-development`
 - `read-qec-paper`
-- `setup-matt-pocock-skills`
 - `tdd`
-- `to-issues`
-- `to-prd`
-- `triage`
 - `wave-mcp`
 - `web-access`
 
