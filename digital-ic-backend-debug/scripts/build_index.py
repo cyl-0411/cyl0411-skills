@@ -149,7 +149,7 @@ def main() -> int:
         sys.stdout.reconfigure(encoding="utf-8")
 
     parser = argparse.ArgumentParser(description="Build a local IC backend document search index.")
-    parser.add_argument("--repo-root", default=".", help="Path to IC_Backend_WIKI root.")
+    parser.add_argument("--repo-root", default=".", help="Path to the IC Backend Wiki root.")
     parser.add_argument("--out", required=True, help="Output JSON index path.")
     parser.add_argument("--include-tags", action="store_true", help="Index docs/tags pages as secondary references.")
     parser.add_argument("--include-innovus", action="store_true", help="Index Innovus flow command notes.")

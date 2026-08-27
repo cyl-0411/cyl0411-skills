@@ -8,7 +8,7 @@
     {
       "id": "ars-codex-session-announce",
       "event": "SessionStart",
-      "command": "python3 skills/academic-research-suite/codex/scripts/ars_codex_hook.py announce",
+      "command": "node \"__ARS_DIR__/codex/scripts/ars_codex_hook.mjs\" announce",
       "mutates_files": false,
       "reads_environment": false,
       "network": false,

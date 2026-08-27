@@ -1,9 +1,9 @@
 {
   "name": "academic-research-suite",
-  "adapter_version": "0.1.27",
+  "adapter_version": "0.1.28",
   "version_file": "VERSION",
   "generated_for": "codex",
-  "generated_date": "2026-08-24",
+  "generated_date": "2026-08-27",
   "source_repositories": [
     {
       "name": "academic-research-skills",

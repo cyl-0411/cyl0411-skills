@@ -8,9 +8,11 @@ metadata:
 
 # Wave MCP
 
-Use the `wave-mcp` MCP server as the analysis backend. It runs in the `IC-EDA`
-WSL distribution and sees Linux paths, even when Codex itself is running on
-Windows.
+Use the `wave-mcp` MCP server as the analysis backend. It runs in the WSL
+distribution selected by the MCP configuration and sees Linux paths, even when
+Codex itself is running on Windows. Do not infer the distribution or Linux user
+home from a copied example; read the active MCP configuration or the
+`WAVE_MCP_WSL_DISTRO` setting.
 
 ## Availability and paths
 
@@ -18,9 +20,10 @@ Windows.
   missing immediately after installation, ask the user to restart Codex; do not
   pretend to have queried a waveform. For repair or upgrade work, read
   [references/setup.md](references/setup.md).
-- Convert Windows paths such as `E:\project\dump.fst` to WSL paths such as
-  `/mnt/e/project/dump.fst` before passing them to MCP tools. Use `wslpath -a`
-  when the mapping is not obvious.
+- Convert every Windows input path with the configured distribution, for
+  example `wsl.exe -d <WAVE_WSL_DISTRO> -- wslpath -a '<WINDOWS_PATH>'`, before
+  passing it to MCP tools. Treat `/mnt/<drive>/...` only as a possible result,
+  not as a path-construction rule.
 - Audit filelists before use. Resolve relative entries from the same base used
   by the simulator, follow nested `-f`/`-F` entries, and translate Windows
   absolute paths inside filelists and `+incdir+` options. Never rewrite the

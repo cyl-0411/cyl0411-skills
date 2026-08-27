@@ -1,13 +1,13 @@
 # update_spec.py
 
-> Architecture rationale (why narrow scope, why no backups, the spec_lock as execution contract): see [docs/technical-design.md "Spec Propagation"](../../../../docs/technical-design.md#spec-propagation-spec_lockmd-as-execution-contract).
+> Architecture rationale (why narrow scope, why no backups, the spec_lock as execution contract): see [docs/technical-design.md "Spec Propagation"](../../docs/technical-design.md#spec-propagation-spec_lockmd-as-execution-contract).
 
 Propagate a `spec_lock.md` value change to both the lock file and every `svg_output/*.svg`. The single edit surface for bulk style tweaks after generation.
 
 ## Usage
 
 ```bash
-python3 skills/ppt-master/scripts/update_spec.py <project_path> <section>.<key>=<value>
+"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/update_spec.py <project_path> <section>.<key>=<value>
 ```
 
 Bare `<key>=<value>` (no dot) is treated as `colors.<key>=<value>` for backward compat.
@@ -23,13 +23,13 @@ One invocation = one change. The tool:
 
 ```bash
 # swap the primary color deck-wide (bare key → colors.primary)
-python3 skills/ppt-master/scripts/update_spec.py projects/acme_ppt169_20260301 primary=#0066AA
+"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/update_spec.py projects/acme_ppt169_20260301 primary=#0066AA
 
 # explicit section.key form
-python3 skills/ppt-master/scripts/update_spec.py projects/acme_ppt169_20260301 colors.accent=#FF6B35
+"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/update_spec.py projects/acme_ppt169_20260301 colors.accent=#FF6B35
 
 # change the deck-wide font family
-python3 skills/ppt-master/scripts/update_spec.py projects/acme_ppt169_20260301 \
+"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/update_spec.py projects/acme_ppt169_20260301 \
   'typography.font_family="Inter", Arial, sans-serif'
 ```
 

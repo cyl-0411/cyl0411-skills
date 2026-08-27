@@ -18,22 +18,22 @@ This directory contains user-facing scripts for conversion, project setup, SVG p
 Typical end-to-end workflow:
 
 ```bash
-python3 scripts/source_to_md/pdf_to_md.py <file.pdf>
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py <file.pdf>
 # or
-python3 scripts/source_to_md/ppt_to_md.py <deck.pptx>
-python3 scripts/source_to_md/excel_to_md.py <workbook.xlsx>
-python3 scripts/project_manager.py init <project_name> --format ppt169
-python3 scripts/project_manager.py import-sources <project_path> <source_files...> --move
-python3 scripts/total_md_split.py <project_path>
-python3 scripts/finalize_svg.py <project_path>
-python3 scripts/animation_config.py scaffold <project_path>  # optional object-level animation overrides
-python3 scripts/svg_to_pptx.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/ppt_to_md.py <deck.pptx>
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/excel_to_md.py <workbook.xlsx>
+"<PPT_PYTHON>" -X utf8 scripts/project_manager.py init <project_name> --format ppt169
+"<PPT_PYTHON>" -X utf8 scripts/project_manager.py import-sources <project_path> <source_files...> --move
+"<PPT_PYTHON>" -X utf8 scripts/total_md_split.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/finalize_svg.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/animation_config.py scaffold <project_path>  # optional object-level animation overrides
+"<PPT_PYTHON>" -X utf8 scripts/svg_to_pptx.py <project_path>
 ```
 
 Repository update:
 
 ```bash
-python3 scripts/update_repo.py
+"<PPT_PYTHON>" -X utf8 scripts/update_repo.py
 ```
 
 ## Script Index
@@ -53,52 +53,52 @@ python3 scripts/update_repo.py
 Conversion:
 
 ```bash
-python3 scripts/source_to_md/pdf_to_md.py <file.pdf>
-python3 scripts/source_to_md/ppt_to_md.py <deck.pptx>
-python3 scripts/source_to_md/doc_to_md.py <file.docx>
-python3 scripts/source_to_md/excel_to_md.py <workbook.xlsx>
-python3 scripts/source_to_md/web_to_md.py <url>
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py <file.pdf>
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/ppt_to_md.py <deck.pptx>
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/doc_to_md.py <file.docx>
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/excel_to_md.py <workbook.xlsx>
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/web_to_md.py <url>
 ```
 
 Project setup:
 
 ```bash
-python3 scripts/project_manager.py init <project_name> --format ppt169
-python3 scripts/project_manager.py import-sources <project_path> <source_files...> --move
-python3 scripts/project_manager.py validate <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/project_manager.py init <project_name> --format ppt169
+"<PPT_PYTHON>" -X utf8 scripts/project_manager.py import-sources <project_path> <source_files...> --move
+"<PPT_PYTHON>" -X utf8 scripts/project_manager.py validate <project_path>
 ```
 
 Template source import:
 
 ```bash
-python3 scripts/pptx_template_import.py <template.pptx>
-python3 scripts/pptx_template_import.py <template.pptx> --manifest-only
-python3 scripts/pptx_template_import.py <template.pptx> --inheritance-mode both
+"<PPT_PYTHON>" -X utf8 scripts/pptx_template_import.py <template.pptx>
+"<PPT_PYTHON>" -X utf8 scripts/pptx_template_import.py <template.pptx> --manifest-only
+"<PPT_PYTHON>" -X utf8 scripts/pptx_template_import.py <template.pptx> --inheritance-mode both
 ```
 
 Post-processing and export:
 
 ```bash
-python3 scripts/total_md_split.py <project_path>
-python3 scripts/finalize_svg.py <project_path>
-python3 scripts/svg_to_pptx.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/total_md_split.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/finalize_svg.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/svg_to_pptx.py <project_path>
 ```
 
 Image generation:
 
 ```bash
-python3 scripts/latex_render.py <project_path>
-python3 scripts/latex_render.py <project_path> --providers codecogs,quicklatex,mathpad,wikimedia
-python3 scripts/image_gen.py "A modern futuristic workspace"
-python3 scripts/image_gen.py --list-backends
-python3 scripts/analyze_images.py <project_path>/images
+"<PPT_PYTHON>" -X utf8 scripts/latex_render.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/latex_render.py <project_path> --providers codecogs,quicklatex,mathpad,wikimedia
+"<PPT_PYTHON>" -X utf8 scripts/image_gen.py "A modern futuristic workspace"
+"<PPT_PYTHON>" -X utf8 scripts/image_gen.py --list-backends
+"<PPT_PYTHON>" -X utf8 scripts/analyze_images.py <project_path>/images
 ```
 
 Repository update:
 
 ```bash
-python3 scripts/update_repo.py
-python3 scripts/update_repo.py --skip-pip
+"<PPT_PYTHON>" -X utf8 scripts/update_repo.py
+"<PPT_PYTHON>" -X utf8 scripts/update_repo.py --skip-pip
 ```
 
 ## Recommendations

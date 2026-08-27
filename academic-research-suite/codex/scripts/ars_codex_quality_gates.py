@@ -59,7 +59,12 @@ def _json(path: Path) -> dict[str, Any]:
 def _resolve_manifest_path(value: str) -> Path:
     path = Path(value)
     if path.parts and path.parts[0] == "skills":
-        return SUITE_ROOT.parents[1] / path
+        repository_layout = SUITE_ROOT.parents[1] / path
+        if repository_layout.exists():
+            return repository_layout
+        if len(path.parts) >= 2 and path.parts[1] == SUITE_ROOT.name:
+            return SUITE_ROOT.joinpath(*path.parts[2:])
+        return repository_layout
     return SUITE_ROOT / path
 
 
@@ -83,11 +88,16 @@ def check_manifest() -> list[str]:
         skill_match.group(1) == adapter_version,
         f"SKILL.md version {skill_match.group(1)!r} != adapter version {adapter_version!r}",
     )
-    plugin_version = _json(PLUGIN_ROOT / ".codex-plugin" / "plugin.json").get("version")
-    _require(
-        plugin_version == adapter_version,
-        f"Desktop plugin version {plugin_version!r} != adapter version {adapter_version!r}",
-    )
+    plugin_manifest = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
+    if plugin_manifest.is_file():
+        plugin_version = _json(plugin_manifest).get("version")
+        _require(
+            plugin_version == adapter_version,
+            f"Desktop plugin version {plugin_version!r} != adapter version {adapter_version!r}",
+        )
+        messages.append("Desktop plugin version matches the direct skill")
+    else:
+        messages.append("Desktop plugin bundle is not installed; validating direct-skill mode")
     repo_version_path = SUITE_ROOT.parents[1] / "VERSION"
     if repo_version_path.is_file():
         repo_version = repo_version_path.read_text(encoding="utf-8").strip()
@@ -95,7 +105,7 @@ def check_manifest() -> list[str]:
             repo_version == adapter_version,
             f"repo VERSION {repo_version!r} != adapter version {adapter_version!r}",
         )
-    messages.append(f"package version {adapter_version} is aligned across skill, manifest, plugin, and VERSION")
+    messages.append(f"package version {adapter_version} is aligned across installed package surfaces")
 
     for key, value in manifest["paths"].items():
         if key in {"adapter_root"}:
@@ -218,8 +228,9 @@ def check_hook_safety() -> list[str]:
     for hook in hooks:
         _require(hook.get("mutates_files") is False, f"hook mutates files: {hook.get('id')}")
         command = hook.get("command", "")
-        _require(command.startswith("python3 "), f"hook command must use python3 wrapper: {command}")
-        _require("ars_codex_hook.py" in command, f"hook command must use adapter hook wrapper: {command}")
+        _require(command.startswith("node "), f"hook command must use the Node wrapper: {command}")
+        _require("__ARS_DIR__" in command, f"source hook command must keep the install-time ARS path placeholder: {command}")
+        _require("ars_codex_hook.mjs" in command, f"hook command must use adapter hook wrapper: {command}")
         for pattern in FORBIDDEN_HOOK_PATTERNS:
             _require(not re.search(pattern, command), f"unsafe hook command pattern {pattern!r}: {command}")
     return [f"{len(hooks)} hook command(s) are disabled-by-default and pass static safety checks"]
@@ -282,7 +293,8 @@ def check_desktop_plugin_bundle() -> list[str]:
     skill_md = suite_entry / "SKILL.md"
     package_manifest = suite_entry / "manifest.json"
 
-    _require(plugin_manifest.is_file(), f"Desktop plugin manifest missing: {plugin_manifest}")
+    if not plugin_manifest.is_file():
+        return ["Desktop plugin bundle is not installed; direct-skill mode has no mirror to compare"]
     manifest = _json(plugin_manifest)
     _require(manifest.get("name") == "ars-codex", "Desktop plugin name must be ars-codex")
     _require(

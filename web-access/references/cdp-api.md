@@ -2,94 +2,101 @@
 
 ## 基础信息
 
+`<WEB_ACCESS_DIR>` 表示 `web-access` skill 的绝对目录。
+
 - 地址：`http://localhost:3456`
-- 启动：`node ~/.claude/skills/web-access/scripts/cdp-proxy.mjs &`
+- 启动：`node "<WEB_ACCESS_DIR>/scripts/cdp-proxy.mjs"`
 - 启动后持续运行，不建议主动停止（重启需 Chrome 重新授权）
-- 强制停止：`pkill -f cdp-proxy.mjs`
+- 停止：`node "<WEB_ACCESS_DIR>/scripts/stop-proxy.mjs"`
 
 ## API 端点
+
+### POST /shutdown
+
+仅监听本机回环地址，用于跨平台安全停止当前 proxy。优先使用
+`scripts/stop-proxy.mjs`，不要按进程名批量终止 Node 进程。
 
 ### GET /health
 健康检查，返回连接状态。
 ```bash
-curl -s http://localhost:3456/health
+curl.exe -s http://localhost:3456/health
 ```
 
 ### GET /targets
 列出所有已打开的页面 tab。返回数组，每项含 `targetId`、`title`、`url`。
 ```bash
-curl -s http://localhost:3456/targets
+curl.exe -s http://localhost:3456/targets
 ```
 
 ### POST /new
 创建新后台 tab，自动等待页面加载完成。**URL 通过 POST body 原样传入**，无需 URL-encode、不会因 query 中含 `&` 被切分。返回 `{ targetId }`。
 ```bash
-curl -s -X POST --data-raw 'https://example.com' http://localhost:3456/new
+curl.exe -s -X POST --data-raw 'https://example.com' http://localhost:3456/new
 # 含 query 的目标 URL（如带 token 的小红书笔记）也直接原样传：
-curl -s -X POST --data-raw 'https://www.xiaohongshu.com/explore/xxx?xsec_source=app_share&xsec_token=ABC&type=normal' http://localhost:3456/new
+curl.exe -s -X POST --data-raw 'https://www.xiaohongshu.com/explore/xxx?xsec_source=app_share&xsec_token=ABC&type=normal' http://localhost:3456/new
 ```
 > v2.5.3 起改为 POST。旧的 `GET /new?url=...` 返回 400 + 迁移指引，详见 `migration-2.5.3.md`。
 
 ### GET /close?target=ID
 关闭指定 tab。
 ```bash
-curl -s "http://localhost:3456/close?target=TARGET_ID"
+curl.exe -s "http://localhost:3456/close?target=TARGET_ID"
 ```
 
 ### POST /navigate?target=ID
 在已有 tab 中导航到新 URL，自动等待加载。**target 走 query（不带特殊字符的不透明 ID），URL 走 POST body**。
 ```bash
-curl -s -X POST --data-raw 'https://example.com' "http://localhost:3456/navigate?target=ID"
+curl.exe -s -X POST --data-raw 'https://example.com' "http://localhost:3456/navigate?target=ID"
 ```
 > v2.5.3 起改为 POST。旧的 `GET /navigate?target=...&url=...` 返回 400 + 迁移指引，详见 `migration-2.5.3.md`。
 
 ### GET /back?target=ID
 后退一页。
 ```bash
-curl -s "http://localhost:3456/back?target=ID"
+curl.exe -s "http://localhost:3456/back?target=ID"
 ```
 
 ### GET /info?target=ID
 获取页面基础信息（title、url、readyState）。
 ```bash
-curl -s "http://localhost:3456/info?target=ID"
+curl.exe -s "http://localhost:3456/info?target=ID"
 ```
 
 ### POST /eval?target=ID
 执行 JavaScript 表达式，POST body 为 JS 代码。
 ```bash
-curl -s -X POST "http://localhost:3456/eval?target=ID" -d 'document.title'
+curl.exe -s -X POST "http://localhost:3456/eval?target=ID" -d 'document.title'
 ```
 
 ### POST /click?target=ID
 JS 层面点击（`el.click()`），POST body 为 CSS 选择器。自动 scrollIntoView 后点击。简单快速，覆盖大多数场景。
 ```bash
-curl -s -X POST "http://localhost:3456/click?target=ID" -d 'button.submit'
+curl.exe -s -X POST "http://localhost:3456/click?target=ID" -d 'button.submit'
 ```
 
 ### POST /clickAt?target=ID
 CDP 浏览器级真实鼠标点击（`Input.dispatchMouseEvent`），POST body 为 CSS 选择器。先获取元素坐标，再模拟鼠标按下/释放。算真实用户手势，能触发文件对话框、绕过部分反自动化检测。
 ```bash
-curl -s -X POST "http://localhost:3456/clickAt?target=ID" -d 'button.upload'
+curl.exe -s -X POST "http://localhost:3456/clickAt?target=ID" -d 'button.upload'
 ```
 
 ### POST /setFiles?target=ID
 给 file input 设置本地文件路径（`DOM.setFileInputFiles`），完全绕过文件对话框。POST body 为 JSON。
 ```bash
-curl -s -X POST "http://localhost:3456/setFiles?target=ID" -d '{"selector":"input[type=file]","files":["/path/to/file1.png","/path/to/file2.png"]}'
+curl.exe -s -X POST "http://localhost:3456/setFiles?target=ID" -d '{"selector":"input[type=file]","files":["/path/to/file1.png","/path/to/file2.png"]}'
 ```
 
 ### GET /scroll?target=ID&y=3000&direction=down
 滚动页面。`direction` 可选 `down`（默认）、`up`、`top`、`bottom`。滚动后自动等待 800ms 供懒加载触发。
 ```bash
-curl -s "http://localhost:3456/scroll?target=ID&y=3000"
-curl -s "http://localhost:3456/scroll?target=ID&direction=bottom"
+curl.exe -s "http://localhost:3456/scroll?target=ID&y=3000"
+curl.exe -s "http://localhost:3456/scroll?target=ID&direction=bottom"
 ```
 
-### GET /screenshot?target=ID&file=/tmp/shot.png
+### GET /screenshot?target=ID&file=<ABSOLUTE_OUTPUT_PATH>
 截图。指定 `file` 参数保存到本地文件；不指定则返回图片二进制。可选 `format=jpeg`。
 ```bash
-curl -s "http://localhost:3456/screenshot?target=ID&file=/tmp/shot.png"
+curl.exe -s "http://localhost:3456/screenshot?target=ID&file=<ABSOLUTE_OUTPUT_PATH>"
 ```
 
 ## /eval 使用提示

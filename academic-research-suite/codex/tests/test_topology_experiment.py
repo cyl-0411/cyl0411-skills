@@ -38,6 +38,15 @@ def test_every_frozen_input_digest_recomputes_from_allowlisted_files() -> None:
         assert all("good_run" not in item["source"] for item in task["inputs"])
 
 
+def test_frozen_text_hash_is_independent_of_checkout_newlines(tmp_path: Path) -> None:
+    runner = _load_runner()
+    lf = tmp_path / "lf.md"
+    crlf = tmp_path / "crlf.md"
+    lf.write_bytes(b"first\nsecond\n")
+    crlf.write_bytes(b"first\r\nsecond\r\n")
+    assert runner.portable_text_sha256(lf) == runner.portable_text_sha256(crlf)
+
+
 def test_all_registered_topologies_are_acyclic_and_have_existing_parents() -> None:
     runner = _load_runner()
     cohort = runner.load_cohort()

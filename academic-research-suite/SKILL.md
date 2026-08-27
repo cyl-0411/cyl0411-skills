@@ -1,24 +1,17 @@
 ---
 name: academic-research-suite
 description: >
-  ARS-Codex workflows for research, academic writing, manuscript review,
-  research-to-paper pipelines, and experiment planning. Use when the user asks for deep research, literature
-  review, systematic review, meta-analysis, research question refinement,
-  academic paper drafting, paper revision, citation or integrity checks,
-  reviewer simulation, peer review, editorial decision letters, research-to-paper
-  workflows, experiment execution planning, statistical interpretation, or human
-  study protocol support. Korean triggers: 논문 심사, 논문 수정, 초록 작성,
-  체계적 문헌고찰, 연구부터 논문까지. Also use for Claude-style ARS command aliases such as
-  /ars-plan, ars-plan, /ars-outline, /ars-abstract, /ars-lit-review,
-  /ars-citation-check, /ars-disclosure, /ars-format-convert, /ars-3w,
-  /ars-revision-coach, /ars-revision, /ars-reviewer, /ars-mark-read,
-  /ars-unmark-read, /ars-cache-invalidate, /ars-rebuttal-audit, and /ars-full. This skill vendors ARS role prompts,
-  references, templates, and shared handoff schemas under ars/.
+  Use the ARS-Codex framework for methodical academic research and multi-stage
+  research-to-paper work, including deep or systematic literature reviews,
+  meta-analysis, research-question refinement, general academic drafting and
+  revision, peer-review simulation, experiment planning, statistical
+  interpretation, and study protocols. Trigger for explicit ARS or ars-* requests,
+  or when a task spans several research stages. For a single Nature-specific
+  deliverable, use the matching nature-* skill instead.
 metadata:
-  version: "0.1.27"
+  version: "0.1.28"
   upstream_suite: "academic-research-skills"
   codex_adapter: true
-allowed-tools: Read, Glob, Grep, WebSearch, Bash(uv *), Bash(python *), Bash(python3 *)
 ---
 
 # ARS-Codex
@@ -28,7 +21,7 @@ This is a Codex adapter for the ARS suite. The vendored ARS content lives under
 
 ## Versioning
 
-This Codex package is version `0.1.27`. The repo-root `VERSION`, this
+This Codex package is version `0.1.28`. The repo-root `VERSION`, this
 `SKILL.md` metadata version, and `manifest.json` `adapter_version` must match.
 Vendored ARS suite versions are tracked separately by source repository commit
 in `manifest.json`.
@@ -140,6 +133,19 @@ tell the user to use the plain alias form, for example `ars-plan my topic`.
 
 The upstream ARS files were written for Claude Code. Apply these mappings when
 using them in Codex:
+
+### Python runtime
+
+Do not invoke a literal `python3` command on Windows. Before running any
+script-backed adapter or vendored ARS check, resolve `<ARS_PYTHON>` in this
+order: `ARS_PYTHON`, the active virtual environment, `<ARS_DIR>/.venv`, then a
+working platform interpreter (`py -3`/`python` on Windows, `python3`/`python` on
+POSIX). Invoke it directly from the current shell with `-X utf8`; do not launch
+Python through a Node child process. If no real interpreter is available, fail
+with the attempted candidates instead of accepting a Windows Store execution
+alias. Treat literal `python3` commands inside the vendored upstream snapshot as
+source documentation: translate only the command being run to
+`<ARS_PYTHON> -X utf8 ...` rather than mechanically rewriting upstream files.
 
 | Upstream wording | Codex behavior |
 |---|---|

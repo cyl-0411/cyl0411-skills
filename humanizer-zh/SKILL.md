@@ -1,8 +1,8 @@
 ---
 name: humanizer-zh
 description: |
-  去除中文文本中的 AI 生成痕迹。适用于编辑或审阅中文文本，使其听起来更自然、更像人类书写；
-  处理中文文本时使用本技能，英文文本请改用 humanizer。基于维基百科的"AI 写作特征"综合指南。检测并修复以下模式：夸大的象征意义、
+  去除文本中的 AI 生成痕迹。适用于编辑或审阅文本，使其听起来更自然、更像人类书写。
+  基于维基百科的"AI 写作特征"综合指南。检测并修复以下模式：夸大的象征意义、
   宣传性语言、以 -ing 结尾的肤浅分析、模糊的归因、破折号过度使用、三段式法则、
   AI 词汇、否定式排比、过多的连接性短语。
 allowed-tools:
@@ -11,7 +11,7 @@ allowed-tools:
   - Edit
   - AskUserQuestion
 metadata:
-  trigger: 编辑或审阅中文文本，去除 AI 写作痕迹（英文文本用 humanizer）
+  trigger: 编辑或审阅文本，去除 AI 写作痕迹
   source: 翻译自 blader/humanizer，参考 hardikpandya/stop-slop
 ---
 

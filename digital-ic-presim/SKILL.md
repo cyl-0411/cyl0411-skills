@@ -54,11 +54,30 @@ sim/<dut>/
 
 ## VCS/WSL Flow
 
-- Run from the configured IC environment, for example:
+- Resolve both the project root and WSL distribution at runtime. Never reuse a
+  personal `/mnt/c/Users/...` path from an example. Use an explicit distro from
+  task context or `IC_EDA_WSL_DISTRO`; if neither exists, stop and list the
+  available distros instead of assuming a username, drive, or distro. Translate
+  the actual Windows path with `wslpath`, then use WSL's `--cd`/`--exec` arguments
+  so spaces in either path do not pass through a shell command string:
 
-```sh
-wsl -d IC-EDA -- bash -lc 'cd /mnt/c/Users/CYL04/Desktop/sources && make -C sim/<dut> compile'
+```powershell
+$projectRoot = (Resolve-Path -LiteralPath '<PROJECT_ROOT>').Path
+$wslDistro = if ($env:IC_EDA_WSL_DISTRO) { $env:IC_EDA_WSL_DISTRO } else { '<WSL_DISTRO>' }
+if ($wslDistro -eq '<WSL_DISTRO>') { throw 'Set IC_EDA_WSL_DISTRO or supply the task distro.' }
+wsl.exe --distribution $wslDistro --exec true
+if ($LASTEXITCODE -ne 0) {
+    wsl.exe --list --quiet
+    throw "WSL distro is unavailable: $wslDistro"
+}
+$wslInput = $projectRoot.Replace('\', '\\') # survive wsl.exe argument parsing
+$wslRoot = (wsl.exe --distribution $wslDistro -- wslpath -a -- $wslInput).Trim()
+if (-not $wslRoot) { throw "wslpath could not translate: $projectRoot" }
+wsl.exe --distribution $wslDistro --cd $wslRoot --exec make -C 'sim/<dut>' compile
 ```
+
+The same resolved `$wslDistro` and `$wslRoot` must be reused for `run` and
+`wave`; do not resolve them independently in later commands.
 
 - Standard Makefile behavior:
   - `make -C sim/<dut> compile` checks/activates license, compiles RTL/TB, and prepares Verdi source data.

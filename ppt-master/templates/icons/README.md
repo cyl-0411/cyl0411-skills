@@ -44,7 +44,7 @@ Use placeholder syntax **during SVG generation**:
 `finalize_svg.py` auto-embeds all placeholders during post-processing. To run manually:
 
 ```bash
-python3 scripts/svg_finalize/embed_icons.py svg_output/*.svg
+"<PPT_PYTHON>" -X utf8 scripts/svg_finalize/embed_icons.py svg_output/*.svg
 ```
 
 ---

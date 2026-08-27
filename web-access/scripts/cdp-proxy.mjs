@@ -61,7 +61,7 @@ async function discoverChromePort() {
     if (pinnedBrowserId && pinnedBrowserId !== result.browser.id) {
       throw new Error(
         `本次连接的浏览器已经是 ${pinnedBrowserId}，不会自动切到 ${result.browser.id}。` +
-        `如果想换成 ${result.browser.id}，请先在终端运行 pkill -f cdp-proxy.mjs 重置。`
+        `如果想换成 ${result.browser.id}，请先运行 node scripts/stop-proxy.mjs 重置。`
       );
     }
     pinnedBrowserId = result.browser.id;
@@ -76,7 +76,7 @@ async function discoverChromePort() {
     const src = result.source === 'override' ? '本次指定' : '默认偏好';
     throw new Error(
       `${src}的浏览器是 "${expected}"，但没连上。Agent 处理顺序：` +
-      `(1) 先用系统命令打开 ${expected}（按平台选择，如 macOS 的 open -a），稍等后重试请求；` +
+      `(1) 先正常打开 ${expected}，稍等后重试请求；` +
       `(2) 若仍失败，说明远程调试开关没启用 —— 告知用户在地址栏访问 ${expected}://inspect/#remote-debugging 勾选 "Allow remote debugging for this browser instance"。`
     );
   }
@@ -86,7 +86,7 @@ async function discoverChromePort() {
       `本次连接的浏览器是 ${pinnedBrowserId}，但现在没连上。Agent 处理顺序：` +
       `(1) 先用系统命令打开 ${pinnedBrowserId}（按平台选择），稍等后重试请求；` +
       `(2) 若仍失败，告知用户在地址栏访问 ${pinnedBrowserId}://inspect/#remote-debugging 重新勾选允许。` +
-      `若想换成其他浏览器，请先在终端运行 pkill -f cdp-proxy.mjs 重置。`
+      `若想换成其他浏览器，请先运行 node scripts/stop-proxy.mjs 重置。`
     );
   }
   // 仅在「从未成功连接 + 无偏好/override」时允许固定端口兜底（手动 --remote-debugging-port 启动场景）
@@ -117,10 +117,8 @@ async function connect() {
     const discovered = await discoverChromePort();
     if (!discovered) {
       throw new Error(
-        'Chrome 未开启远程调试端口。请用以下方式启动 Chrome：\n' +
-        '  macOS: /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9222\n' +
-        '  Linux: google-chrome --remote-debugging-port=9222\n' +
-        '  或在 chrome://flags 中搜索 "remote debugging" 并启用'
+        '所选 Chromium 浏览器未开启远程调试。请正常打开该浏览器，在地址栏访问 ' +
+        '<browser>://inspect/#remote-debugging，并勾选 "Allow remote debugging for this browser instance"。'
       );
     }
     chromePort = discovered.port;
@@ -128,7 +126,7 @@ async function connect() {
   }
 
   const wsUrl = getWebSocketUrl(chromePort, chromeWsPath);
-  if (!wsUrl) throw new Error('无法获取 Chrome WebSocket URL');
+  if (!wsUrl) throw new Error('无法获取浏览器 WebSocket URL');
 
   return connectingPromise = new Promise((resolve, reject) => {
     ws = new WS(wsUrl);
@@ -275,6 +273,20 @@ async function closeAllManagedTabs() {
   if (targets.length) console.log(`[CDP Proxy] Shutdown: closed ${targets.length} managed tab(s)`);
 }
 
+let cleanupTimer = null;
+let shuttingDown = false;
+
+async function shutdown(reason) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`[CDP Proxy] ${reason}, cleaning up...`);
+  if (cleanupTimer) clearInterval(cleanupTimer);
+  await closeAllManagedTabs();
+  try { ws?.close(); } catch { /* ignore */ }
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(0), 2000).unref();
+}
+
 // --- 等待页面加载 ---
 async function waitForLoad(sessionId, timeoutMs = 15000) {
   // 启用 Page 域
@@ -322,6 +334,17 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
   try {
+    if (pathname === '/shutdown') {
+      if (req.method !== 'POST') {
+        res.statusCode = 405;
+        res.end(JSON.stringify({ error: 'POST required' }));
+        return;
+      }
+      res.end(JSON.stringify({ status: 'shutting-down' }));
+      setTimeout(() => shutdown('HTTP shutdown'), 25);
+      return;
+    }
+
     // /health 不需要连接浏览器
     if (pathname === '/health') {
       const connected = ws && (ws.readyState === WS.OPEN || ws.readyState === 1);
@@ -648,15 +671,9 @@ async function main() {
   });
 
   // 定时清理闲置 tab
-  const cleanupTimer = setInterval(cleanupIdleTabs, CLEANUP_INTERVAL);
+  cleanupTimer = setInterval(cleanupIdleTabs, CLEANUP_INTERVAL);
   cleanupTimer.unref();
 
-  const shutdown = async (sig) => {
-    console.log(`[CDP Proxy] ${sig}, cleaning up...`);
-    clearInterval(cleanupTimer);
-    await closeAllManagedTabs();
-    process.exit(0);
-  };
   process.on('SIGINT', () => shutdown('SIGINT'));
   process.on('SIGTERM', () => shutdown('SIGTERM'));
 }

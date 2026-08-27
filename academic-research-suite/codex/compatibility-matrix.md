@@ -1,6 +1,6 @@
 # ARS-Codex Compatibility Matrix
 
-Audit date: 2026-08-24
+Audit date: 2026-08-27
 
 ## Provenance
 
@@ -10,7 +10,7 @@ Audit date: 2026-08-24
 | Upstream Claude Code repo | Tracked in `skills/academic-research-suite/manifest.json` |
 | Upstream suite version | `v3.21.1` |
 | Upstream component versions | deep-research `2.12.1`; academic-paper `3.3.1`; academic-paper-reviewer `1.11.1`; academic-pipeline `3.21.1` |
-| Codex package version | `0.1.27` |
+| Codex package version | `0.1.28` |
 | License | CC BY-NC 4.0 in upstream and Codex package |
 | Upstream sync status | Vendored `ars/` content synced to the signed ARS release `v3.21.1` (peeled commit `127ff85e4bbfcdd10b95040537b6c6bd7ad17aeb`); Codex adapter profile retained |
 | Codex-only adapter location | `skills/academic-research-suite/codex/` |
@@ -28,7 +28,7 @@ Audit date: 2026-08-24
 | Reviewer independence | Inline mode must preserve independent reviewer sections before synthesis | Agent-team planner orders independent reviewer sections before editorial synthesis | near | `codex/agents/paper-reviewer-panel.md`, `codex/tests/fixtures/reviewer_full_independent_sections.md` | reviewer fixture gate; adapter pytest | Inline runs rely on faithfully preserving section boundaries |
 | Reviewer scoring and provenance honesty | Live review uses evidence-anchored categorical criterion judgements and remains `NOT_CALIBRATED`; no points, weights, totals, averages, ranking, or binary independence claim | Full-runtime carries six observable panel-provenance axes without using confidence as a weighting rule | near | `ars/scripts/check_reviewer_scoring_honesty.py`, `ars/scripts/review_panel_provenance.py`, `codex/full-runtime-manifest.json` | upstream honesty and provenance tests; adapter manifest validation | Categorical judgement still requires substantive expert reasoning; provenance is not proof of independence |
 | Executable panel synthesis | Reviewer artifacts can be checked with the vendored closed-grammar panel checker | Planner exposes the checker as a review quality gate | near | `ars/scripts/check_panel_synthesis.py`, `codex/full-runtime-manifest.json` | upstream panel checker tests | The checker validates artifact self-consistency, not substantive correctness |
-| Hooks and update reminder | Upstream Claude hooks and the v3.18 SessionStart update checker are metadata only | Disabled-by-default read-only Codex hook pack; no automatic upstream update check | partial | `ars/scripts/ars_update_check.sh`, `codex/hooks/hooks.json`, `codex/scripts/ars_codex_hook.py` | `hook-safety` gate; upstream update-check tests | Plugin users refresh and re-add the marketplace package; direct skill users reinstall or pull |
+| Hooks and update reminder | Upstream Claude hooks and the v3.18 SessionStart update checker are metadata only | Disabled-by-default read-only Codex hook pack; no automatic upstream update check | partial | `ars/scripts/ars_update_check.sh`, `codex/hooks/hooks.json`, `codex/scripts/ars_codex_hook.mjs` | `hook-safety` gate; upstream update-check tests | Plugin users refresh and re-add the marketplace package; direct skill users reinstall or pull |
 | Model routing | Heavy `ars-full`, `ars-reviewer`, and `ars-revision-coach` routes have no v3.21.1 model frontmatter and inherit the session model; light routes retain `sonnet` metadata | Planner reports `inherit` or the light-route hint without forcing model changes | partial | `codex/full-runtime-manifest.json`, `codex/scripts/ars_codex_full_runtime.py` | adapter pytest; plan inspection | Not equivalent to Claude Code model pinning |
 | ARS model tiering | Unset preserves the active Codex model | Planner surfaces `economy` / `quality-boost` as advisory metadata; classification is applied only when per-dispatch model selection exists | partial | `ars/shared/model_tiering.md`, `ars/scripts/model_tiering_manifest.json`, `codex/scripts/ars_codex_full_runtime.py` | upstream tiering lint; adapter pytest | Codex runtimes may not expose relative-tier or per-dispatch model control |
 | Material Passport | Prompt/procedure plus vendored validators | Full-runtime manifest exposes passport reset as a quality gate | near | `ars/scripts/check_passport_reset_contract.py`, `codex/full-runtime-manifest.json` | upstream validator; adapter gate | Runtime context isolation is procedural, not a hard sandbox |

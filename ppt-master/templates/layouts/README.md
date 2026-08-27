@@ -4,7 +4,7 @@
 
 Single source of truth for what layouts exist: [`layouts_index.json`](./layouts_index.json) (`layout_id → { summary, canvas_format, page_count, page_types }`). This README explains the kind; it does **not** enumerate layouts.
 
-Full data model: [`docs/zh/templates-architecture.md`](../../../../docs/zh/templates-architecture.md).
+Full data model: [`docs/zh/templates-architecture.md`](../../docs/zh/templates-architecture.md).
 
 ---
 
@@ -68,8 +68,8 @@ Templates use `{{PLACEHOLDER}}` to mark replaceable content. New layouts should 
 
 1. Run [`workflows/create-template.md`](../../workflows/create-template.md) (default produces a deck; explicit "structure only / no identity" option produces a layout)
 2. Resulting directory lands under `templates/layouts/<id>/`
-3. Validate: `python3 skills/ppt-master/scripts/svg_quality_checker.py templates/layouts/<id> --template-mode --format ppt169`
-4. Register: `python3 skills/ppt-master/scripts/register_template.py <id> --kind layout`
+3. Validate: `"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/svg_quality_checker.py templates/layouts/<id> --template-mode --format ppt169`
+4. Register: `"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/register_template.py <id> --kind layout`
 
 The register step updates [`layouts_index.json`](./layouts_index.json) — the single source of truth for layout discovery.
 

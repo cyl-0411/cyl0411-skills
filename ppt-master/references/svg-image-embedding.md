@@ -48,7 +48,7 @@ Defined in the Design Specification & Content Outline; each image carries an `Ac
    ├── Sourced + license_tier=attribution-required → <image href=...> + small <text> credit element on the slide
    ├── Rendered formula → <image href="../images/formula_001.png" preserveAspectRatio="xMidYMid meet" .../>
    └── Placeholder / Needs-Manual without file → Dashed border + description text
-4. Preview: python3 -m http.server -d <project_path> 8000 → /svg_output/<filename>.svg
+4. Preview: "<PPT_PYTHON>" -X utf8 -m http.server -d <project_path> 8000 → /svg_output/<filename>.svg
 5. Post-processing & Export → follow shared-standards.md §5
 ```
 
@@ -96,7 +96,7 @@ Defined in the Design Specification & Content Outline; each image carries an `Ac
 Browser security blocks external images on directly opened SVGs. Serve via HTTP from the project root:
 
 ```bash
-python3 -m http.server -d <project_path> 8000
+"<PPT_PYTHON>" -X utf8 -m http.server -d <project_path> 8000
 # Visit http://localhost:8000/svg_output/your_file.svg
 ```
 
@@ -127,8 +127,8 @@ python3 -m http.server -d <project_path> 8000
 Use the unified pipeline in [shared-standards.md §5](shared-standards.md). `finalize_svg.py` runs before export so image references in `svg_output/` become embedded assets in `svg_final/`.
 
 ```bash
-python3 scripts/finalize_svg.py <project_path>
-python3 scripts/svg_to_pptx.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/finalize_svg.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/svg_to_pptx.py <project_path>
 ```
 
 ### Standalone: embed_images.py (advanced)
@@ -136,9 +136,9 @@ python3 scripts/svg_to_pptx.py <project_path>
 For processing specific SVGs without the full pipeline:
 
 ```bash
-python3 scripts/svg_finalize/embed_images.py <svg_file>                         # Single file
-python3 scripts/svg_finalize/embed_images.py <project_path>/svg_output/*.svg    # Batch
-python3 scripts/svg_finalize/embed_images.py --dry-run <project_path>/svg_output/*.svg  # Preview
+"<PPT_PYTHON>" -X utf8 scripts/svg_finalize/embed_images.py <svg_file>                         # Single file
+"<PPT_PYTHON>" -X utf8 scripts/svg_finalize/embed_images.py <project_path>/svg_output/*.svg    # Batch
+"<PPT_PYTHON>" -X utf8 scripts/svg_finalize/embed_images.py --dry-run <project_path>/svg_output/*.svg  # Preview
 ```
 
 ---

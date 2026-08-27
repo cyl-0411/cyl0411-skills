@@ -286,7 +286,7 @@ def emit_text(results: list[dict[str, Any]]) -> None:
 def main() -> int:
     sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="Confirm Innovus command syntax from local innovus_manual.txt.")
-    parser.add_argument("--repo-root", default=".", help="Path to IC_Backend_WIKI root.")
+    parser.add_argument("--repo-root", default=".", help="Path to the IC Backend Wiki root.")
     parser.add_argument("--command", action="append", default=[], help="Exact Innovus command name. Repeatable.")
     parser.add_argument("--from-search-json", help="Read candidate_commands from a search_docs.py JSON result file.")
     parser.add_argument("--format", choices=["text", "json"], default="text")

@@ -1,8 +1,9 @@
 ---
 name: nature-writing
 description: Draft, restructure, or plan Nature-style manuscript sections from author-provided claims, results, figures, notes, or Chinese drafts. Use when the user wants to write or rebuild an abstract, introduction, related-work, method, experiments, discussion, conclusion, title, or full manuscript argument rather than only polish finished prose.
-version: 1.0.0
-author: Community contribution, refactored into static/dynamic layers
+metadata:
+  version: "1.0.0"
+  author: "Community contribution, refactored into static/dynamic layers"
 ---
 
 # Nature-Style Scientific Writing — Router

@@ -45,6 +45,12 @@ def file_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def portable_text_sha256(path: Path) -> str:
+    """Hash frozen text inputs independently of Git's checkout newline mode."""
+    payload = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(payload).hexdigest()
+
+
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -69,7 +75,7 @@ def bundle_rows(task: dict[str, Any]) -> list[dict[str, str]]:
     rows = []
     for item in sorted(task["inputs"], key=lambda value: value["bundle_path"]):
         source = SUITE_ROOT / item["source"]
-        rows.append({"path": item["bundle_path"], "sha256": file_sha256(source)})
+        rows.append({"path": item["bundle_path"], "sha256": portable_text_sha256(source)})
     return rows
 
 
@@ -202,8 +208,8 @@ def evaluator_digest(task: dict[str, Any]) -> str:
     rubric = next(item for item in task["inputs"] if item["bundle_path"] == "input/rubric.md")
     surfaces = {
         "contract": "ars.codex.held-out-evaluator.v1",
-        "schema": file_sha256(OUTPUT_SCHEMA_PATH),
-        "rubric": file_sha256(SUITE_ROOT / rubric["source"]),
+        "schema": portable_text_sha256(OUTPUT_SCHEMA_PATH),
+        "rubric": portable_text_sha256(SUITE_ROOT / rubric["source"]),
     }
     return digest("ars.codex.topology-evaluator.v1", surfaces)
 
@@ -260,7 +266,7 @@ def materialize_task(task: dict[str, Any], destination: Path) -> None:
     materialized = []
     for item in sorted(task["inputs"], key=lambda value: value["bundle_path"]):
         target = destination / item["bundle_path"]
-        materialized.append({"path": item["bundle_path"], "sha256": file_sha256(target)})
+        materialized.append({"path": item["bundle_path"], "sha256": portable_text_sha256(target)})
     actual = hashlib.sha256(canonical_json(materialized).encode("utf-8")).hexdigest()
     if actual != task["input_digest"]:
         raise ValueError("materialized_input_digest_mismatch")

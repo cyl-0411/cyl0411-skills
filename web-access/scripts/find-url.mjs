@@ -23,7 +23,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { execFileSync } from 'node:child_process';
+import { DatabaseSync } from 'node:sqlite';
 
 // --- 参数解析 -----------------------------------------------------------
 function parseArgs(argv) {
@@ -135,9 +135,10 @@ function searchHistory(profileDir, profileName, browserLabel, keywords, since, l
   try {
     fs.copyFileSync(src, tmp);
     const conds = ['last_visit_time > 0'];
+    const params = [];
     for (const kw of keywords) {
-      const esc = kw.toLowerCase().replace(/'/g, "''");
-      conds.push(`LOWER(title || ' ' || url) LIKE '%${esc}%'`);
+      conds.push("LOWER(title || ' ' || url) LIKE ?");
+      params.push(`%${kw.toLowerCase()}%`);
     }
     if (since) {
       const webkitUs = BigInt(since.getTime()) * 1000n + WEBKIT_EPOCH_DIFF_US;
@@ -153,13 +154,20 @@ function searchHistory(profileDir, profileName, browserLabel, keywords, since, l
       FROM urls WHERE ${conds.join(' AND ')}
       ORDER BY ${orderBy} LIMIT ${limitClause};`;
 
-    const raw = execFileSync('sqlite3', ['-separator', '\t', tmp, sql], { encoding: 'utf-8', maxBuffer: 50 * 1024 * 1024 });
-    return raw.trim().split('\n').filter(Boolean).map(line => {
-      const [title, url, visit, visit_count] = line.split('\t');
-      return { browser: browserLabel, profile: profileName, title, url, visit, visit_count: parseInt(visit_count, 10) };
-    });
-  } catch (e) {
-    if (e.code === 'ENOENT') die('未找到 sqlite3 命令。macOS/Linux 通常自带；Windows 可用 `winget install sqlite.sqlite` 或从 https://sqlite.org/download.html 下载后加入 PATH。');
+    const db = new DatabaseSync(tmp, { readOnly: true });
+    try {
+      return db.prepare(sql).all(...params).map(row => ({
+        browser: browserLabel,
+        profile: profileName,
+        title: row.title || '',
+        url: row.url || '',
+        visit: row.visit || '',
+        visit_count: Number(row.visit_count || 0),
+      }));
+    } finally {
+      db.close();
+    }
+  } catch {
     return [];
   } finally {
     try { fs.unlinkSync(tmp); } catch {}

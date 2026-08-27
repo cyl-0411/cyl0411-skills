@@ -39,18 +39,19 @@ peer report. Only the synthesis node receives completed review artifacts.
 
 ## Reproduction and validation
 
-From the repository root:
+From the repository root, after resolving `<ARS_PYTHON>` using the root
+`SKILL.md` runtime policy:
 
-```bash
-python3 skills/academic-research-suite/codex/scripts/ars_codex_topology_experiment.py validate --require-runs
-python3 skills/academic-research-suite/codex/scripts/ars_codex_topology_experiment.py report
-python3 skills/academic-research-suite/codex/scripts/ars_codex_quality_gates.py all
+```text
+<ARS_PYTHON> -X utf8 skills/academic-research-suite/codex/scripts/ars_codex_topology_experiment.py validate --require-runs
+<ARS_PYTHON> -X utf8 skills/academic-research-suite/codex/scripts/ars_codex_topology_experiment.py report
+<ARS_PYTHON> -X utf8 skills/academic-research-suite/codex/scripts/ars_codex_quality_gates.py all
 ```
 
 Running model calls again is intentionally explicit and non-deterministic:
 
-```bash
-python3 skills/academic-research-suite/codex/scripts/ars_codex_topology_experiment.py run-all
+```text
+<ARS_PYTHON> -X utf8 skills/academic-research-suite/codex/scripts/ars_codex_topology_experiment.py run-all
 ```
 
 Existing run files are skipped. `--force` exists only on a single `run`

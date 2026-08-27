@@ -22,8 +22,11 @@ Do not use flow notes or Wiki articles as proof that an option exists. They can 
 - Before recommending an Innovus command, run:
 
 ```powershell
-python C:\Users\CYL04\.codex\skills\digital-ic-backend-debug\scripts\confirm_innovus_commands.py --repo-root C:\Users\CYL04\Desktop\IC_Backend_WIKI --command <command> --format json
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\confirm_innovus_commands.py') --repo-root $wikiRoot --command <command> --format json
 ```
+
+Resolve `$skillRoot`, `$wikiRoot`, and `<IC_PYTHON>` using the root
+`SKILL.md` path-resolution preflight before running this command.
 
 - Preserve exact command and option spelling from the manual.
 - Mention that the local manual is an Innovus Text Command Reference generated from the local `innovus_manual.txt`; version-sensitive defaults should be checked against the user's installed Innovus build.

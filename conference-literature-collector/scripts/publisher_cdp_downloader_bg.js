@@ -5,7 +5,7 @@ const ROOT = process.cwd();
 const METADATA = path.join(ROOT, process.env.METADATA_FILE || path.join('metadata', 'papers.json'));
 const LOG_CSV = path.join(ROOT, process.env.DOWNLOAD_LOG || path.join('logs', 'download_report.csv'));
 const OUT_CSV = path.join(ROOT, process.env.BROWSER_LOG || path.join('logs', 'browser_download_report.csv'));
-const PAPERS = path.join(ROOT, 'papers');
+const PAPERS = path.resolve(ROOT, process.env.PAPERS_DIR || 'papers');
 const CDP_PORT = Number(process.env.CDP_PORT || '9333');
 const MAX = Number(process.env.MAX || '0');
 const START = Number(process.env.START || '0');
@@ -26,6 +26,7 @@ Environment:
   METADATA_FILE  metadata JSON path, default metadata/papers.json
   DOWNLOAD_LOG   prior download log CSV, default logs/download_report.csv
   BROWSER_LOG    output browser download log CSV, default logs/browser_download_report.csv
+  PAPERS_DIR     PDF output directory, default papers
   ONLY_IDS       comma-separated paper IDs to retry
   MAX            maximum records to process
   START          starting record offset`);
@@ -139,11 +140,26 @@ function publisherFor(record) {
   return 'other';
 }
 
-function makeFilename(record) {
-  return `${record.paper_id}__${slugify(record.title)}__${doiSafe(record.doi)}.pdf`;
+function recordId(record, index = 0) {
+  return String(record.paper_id || record.id || record.session_paper_id || record.doi || `paper-${index + 1}`);
 }
 
-function acmDownloadExpression(filename) {
+function collectionFor(record) {
+  if (record.collection) return String(record.collection);
+  const venue = record.venue_slug || record.conference || record.venue || 'venue';
+  return `${slugify(String(venue))}-${record.year || 'unknown-year'}`;
+}
+
+function logKey(record) {
+  return `${collectionFor(record)}::${recordId(record)}`;
+}
+
+function makeFilename(record) {
+  const doiPart = doiSafe(record.doi);
+  return `${slugify(recordId(record), 40)}__${slugify(record.title)}${doiPart ? `__${doiPart}` : ''}.pdf`;
+}
+
+function publisherDownloadExpression(filename) {
   return `(async()=>{
     const filename=${JSON.stringify(filename)};
     const timeoutMs=${FETCH_TIMEOUT_MS};
@@ -170,12 +186,12 @@ function acmDownloadExpression(filename) {
     candidates = [...new Set(candidates.filter(Boolean).map(absolute))];
     let pdfUrl = candidates.find(u => /\\/doi\\/pdf\\//.test(u)) || candidates[0] || '';
     if (!pdfUrl && /\\/doi\\//.test(location.pathname)) pdfUrl = absolute(location.pathname.replace('/doi/', '/doi/pdf/'));
-    if (!pdfUrl) return {ok:false, reason:'no ACM PDF link found on page', url:location.href};
+    if (!pdfUrl) return {ok:false, reason:'no publisher PDF link found on page', url:location.href};
     const resp = await fetchWithTimeout(pdfUrl, {credentials:'include', headers:{Accept:'application/pdf,*/*'}});
     const contentType = resp.headers.get('content-type') || '';
     const blob = await resp.blob();
     if (!contentType.includes('pdf') || blob.size < 10000) {
-      return {ok:false, reason:'ACM response was not a PDF', pdfUrl, status:resp.status, contentType, size:blob.size};
+      return {ok:false, reason:'publisher response was not a PDF', pdfUrl, status:resp.status, contentType, size:blob.size};
     }
     const objectUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -284,9 +300,11 @@ async function waitForDownload(downloads, filename, before, timeoutMs = 180000) 
 
 async function main() {
   const metadata = JSON.parse(fs.readFileSync(METADATA, 'utf8'));
-  const candidates = metadata.filter(r => r.doi);
+  const candidates = metadata
+    .map((record, index) => ({ ...record, paper_id: recordId(record, index) }))
+    .filter(r => r.doi || r.doi_url || r.ee_url || r.citation_pdf_url);
   const slice = IDS.length > 0
-    ? candidates.filter(r => IDS.includes(String(r.paper_id)))
+    ? candidates.filter(r => IDS.includes(recordId(r)))
     : (MAX > 0 ? candidates.slice(START, START + MAX) : candidates.slice(START));
 
   const version = await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/version`)).json();
@@ -319,16 +337,16 @@ async function main() {
   const header = ['collection', 'paper_id', 'title', 'doi', 'doi_url', 'ee_url', 'source_url', 'download_status', 'pdf_path', 'failure_reason'];
   let browserRows = [];
   if (fs.existsSync(OUT_CSV)) browserRows = parseCsv(fs.readFileSync(OUT_CSV, 'utf8'));
-  const byId = new Map(browserRows.map(r => [String(r.paper_id), r]));
+  const byId = new Map(browserRows.map(r => [logKey(r), r]));
 
   function flushLogs() {
     const ordered = Array.from(byId.values()).sort((a, b) => String(a.paper_id).localeCompare(String(b.paper_id), undefined, { numeric: true }));
     writeCsv(OUT_CSV, ordered, header);
     if (fs.existsSync(LOG_CSV)) {
       const mainRows = parseCsv(fs.readFileSync(LOG_CSV, 'utf8'));
-      const byMainId = new Map(ordered.map(r => [String(r.paper_id), r]));
+      const byMainId = new Map(ordered.map(r => [logKey(r), r]));
       for (const row of mainRows) {
-        const hit = byMainId.get(String(row.paper_id));
+        const hit = byMainId.get(logKey(row));
         if (hit && hit.download_status.startsWith('downloaded_')) {
           row.source_url = hit.source_url;
           row.download_status = hit.download_status;
@@ -343,19 +361,22 @@ async function main() {
   for (let i = 0; i < slice.length; i++) {
     const rec = slice[i];
     const publisher = publisherFor(rec);
+    const collection = collectionFor(rec);
+    const paperId = recordId(rec);
     const filename = makeFilename(rec);
     const file = path.join(PAPERS, filename);
     const doiUrl = rec.doi_url || (rec.doi ? `https://doi.org/${rec.doi}` : '');
+    const landingUrl = rec.citation_pdf_url || doiUrl || rec.ee_url || rec.official_url || '';
     if (isPdfFile(file)) {
       const doneStatus = publisher === 'ieee' ? 'downloaded_ieee_xplore' : publisher === 'acm' ? 'downloaded_acm_dl' : 'downloaded_open_access';
-      byId.set(String(rec.paper_id), {
-        collection: `aspdac${rec.year}`,
-        paper_id: rec.paper_id,
+      byId.set(logKey(rec), {
+        collection,
+        paper_id: paperId,
         title: rec.title,
         doi: rec.doi,
         doi_url: rec.doi_url || '',
         ee_url: rec.ee_url || '',
-        source_url: doiUrl || rec.ee_url || '',
+        source_url: landingUrl,
         download_status: doneStatus,
         pdf_path: path.relative(ROOT, file),
         failure_reason: ''
@@ -369,8 +390,9 @@ async function main() {
     let row;
     try {
       let value;
-      if (publisher === 'ieee') {
-        await cdp.send('Page.navigate', { url: doiUrl }, sessionId, 120000);
+      if (publisher === 'ieee' && rec.doi && arnumberFromDoi(rec.doi)) {
+        if (!landingUrl) throw new Error('no publisher landing or PDF URL');
+        await cdp.send('Page.navigate', { url: landingUrl }, sessionId, 120000);
         await sleep(6000);
         const ar = arnumberFromDoi(rec.doi);
         const stampResult = await cdp.send('Runtime.evaluate', {
@@ -395,10 +417,11 @@ async function main() {
         value = stored;
       } else {
         const before = Date.now();
-        await cdp.send('Page.navigate', { url: doiUrl }, sessionId, 120000);
+        if (!landingUrl) throw new Error('no publisher landing or PDF URL');
+        await cdp.send('Page.navigate', { url: landingUrl }, sessionId, 120000);
         await sleep(6000);
         const evalResult = await cdp.send('Runtime.evaluate', {
-          expression: acmDownloadExpression(filename),
+          expression: publisherDownloadExpression(filename),
           awaitPromise: true,
           returnByValue: true
         }, sessionId, FETCH_TIMEOUT_MS + 30000);
@@ -410,34 +433,34 @@ async function main() {
       }
       if (!isPdfFile(file)) throw new Error(`download completed but file missing or invalid: ${filename}`);
       row = {
-        collection: `aspdac${rec.year}`,
-        paper_id: rec.paper_id,
+        collection,
+        paper_id: paperId,
         title: rec.title,
         doi: rec.doi,
         doi_url: rec.doi_url || '',
         ee_url: rec.ee_url || '',
         source_url: value.pdfUrl || doiUrl || rec.ee_url || '',
-        download_status: publisher === 'ieee' ? 'downloaded_ieee_xplore' : 'downloaded_acm_dl',
+        download_status: publisher === 'ieee' ? 'downloaded_ieee_xplore' : publisher === 'acm' ? 'downloaded_acm_dl' : 'downloaded_publisher_pdf',
         pdf_path: path.relative(ROOT, file),
         failure_reason: ''
       };
       console.log(`[ok] ${rec.paper_id} ${row.pdf_path}`);
     } catch (e) {
       row = {
-        collection: `aspdac${rec.year}`,
-        paper_id: rec.paper_id,
+        collection,
+        paper_id: paperId,
         title: rec.title,
         doi: rec.doi,
         doi_url: rec.doi_url || '',
         ee_url: rec.ee_url || '',
-        source_url: doiUrl || rec.ee_url || '',
+        source_url: landingUrl,
         download_status: 'browser_download_failed',
         pdf_path: '',
         failure_reason: e.stack || e.message || String(e)
       };
       console.log(`[fail] ${rec.paper_id} ${row.failure_reason.slice(0, 240)}`);
     }
-    byId.set(String(rec.paper_id), row);
+    byId.set(logKey(rec), row);
     flushLogs();
     await sleep(DELAY_MS);
   }

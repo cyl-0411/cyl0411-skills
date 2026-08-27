@@ -1,10 +1,10 @@
 # Decision Hardening Before Ralph
 
-Ralph works best when ambiguity is removed before autonomous execution starts. Use `grill-me` or `grill-with-docs` to turn a vague plan into decisions that can be copied into the PRD.
+Ralph works best when ambiguity is removed before autonomous execution starts. Conduct the Phase 0 interview directly, or use `grill-with-docs` when repository documentation should constrain the decisions.
 
 ## Which Grill
 
-Use `grill-me` when:
+Conduct the interview directly when:
 
 - the repo has little formal architecture documentation
 - the user is still shaping the plan
@@ -19,7 +19,7 @@ Use `grill-with-docs` when:
 ## Prompt Pattern
 
 ```text
-Use grill-me before writing the Ralph PRD.
+Stress-test the plan before writing the Ralph PRD.
 Question the plan one decision at a time.
 For each question, recommend an answer and explain the tradeoff briefly.
 Focus on scope, non-goals, validation, dependencies, rollback, and forbidden shortcuts.

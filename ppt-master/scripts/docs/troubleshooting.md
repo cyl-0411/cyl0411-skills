@@ -5,7 +5,7 @@
 1. Run:
 
 ```bash
-python3 scripts/project_manager.py validate <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/project_manager.py validate <project_path>
 ```
 
 2. Fix missing files or invalid directories reported by the validator.
@@ -18,7 +18,7 @@ python3 scripts/project_manager.py validate <project_path>
 3. Preview via a local server if browser file loading is inconsistent:
 
 ```bash
-python3 -m http.server --directory <svg_output_path> 8000
+"<PPT_PYTHON>" -X utf8 -m http.server --directory <svg_output_path> 8000
 ```
 
 ## Speaker Notes Do Not Split
@@ -31,7 +31,7 @@ Check `total.md`:
 Then rerun:
 
 ```bash
-python3 scripts/total_md_split.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/total_md_split.py <project_path>
 ```
 
 ## PPT Export Quality Issues
@@ -39,9 +39,9 @@ python3 scripts/total_md_split.py <project_path>
 Preferred sequence:
 
 ```bash
-python3 scripts/total_md_split.py <project_path>
-python3 scripts/finalize_svg.py <project_path>
-python3 scripts/svg_to_pptx.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/total_md_split.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/finalize_svg.py <project_path>
+"<PPT_PYTHON>" -X utf8 scripts/svg_to_pptx.py <project_path>
 ```
 
 Do not export directly from `svg_output/` when `svg_final/` exists.
@@ -52,8 +52,8 @@ Do not export directly from `svg_output/` when `svg_final/` exists.
 2. Export with the project-relative audio directory:
 
 ```bash
-python3 scripts/notes_to_audio.py <project_path> --voice zh-CN-XiaoxiaoNeural
-python3 scripts/svg_to_pptx.py <project_path> --recorded-narration audio
+"<PPT_PYTHON>" -X utf8 scripts/notes_to_audio.py <project_path> --voice zh-CN-XiaoxiaoNeural
+"<PPT_PYTHON>" -X utf8 scripts/svg_to_pptx.py <project_path> --recorded-narration audio
 ```
 
 `--recorded-narration` prepares PowerPoint recorded timings and narrations. If it fails, check:

@@ -1,13 +1,15 @@
 # ASP-DAC Workflow
 
-Use this reference for ASP-DAC 2023-2026 style collection and archive tasks.
+Use this optional preset only for ASP-DAC collection and archive tasks. The bundled
+metadata parser currently supports 2023-2025; other years must use the generic
+workflow unless the adapter is extended and tested.
 
 ## Directory Layout
 
 Create or use one root per year:
 
 ```text
-ASP_DAC_20xx/
+<PROJECT_ROOT>/
   papers/
   metadata/
   reports/
@@ -39,10 +41,11 @@ Prefer official ASP-DAC program pages for session IDs, titles, authors, abstract
 Use:
 
 ```powershell
-python ".\skills\conference-literature-collector\scripts\aspdac_multiyear_pipeline.py" --year 2025 --root "C:\Users\CYL04\Desktop\ASP_DAC_2025"
+python -X utf8 "<SKILL_DIR>\scripts\aspdac_multiyear_pipeline.py" --year 2025 --root "<PROJECT_ROOT>"
 ```
 
-For ASP-DAC 2026, use the already collected metadata format if present; otherwise follow the same schema and write `metadata/papers.json` and `metadata/papers.csv`.
+For any unsupported year, collect official metadata through the generic workflow,
+then normalize it to `metadata/papers.json` and `metadata/papers.csv`.
 
 ## PDF Download
 
@@ -68,4 +71,3 @@ node ".\skills\conference-literature-collector\scripts\build_asp_dac_archive.mjs
 ```
 
 Do not include external `related__*.pdf` files in annual ASP-DAC folders. Copy them only when the user explicitly asks for external related work.
-

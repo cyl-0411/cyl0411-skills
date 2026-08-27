@@ -1,11 +1,33 @@
 ---
 name: innovus-command-lookup
-description: Look up Cadence Innovus command usage from a local Innovus Text Command Reference, especially when the user asks how to use Innovus commands, options, examples, command order, or related PnR flow commands. This is a pure command lookup skill — syntax, options, and usage examples only, not for diagnosing concrete errors or design problems (use digital-ic-backend-debug for those). Use when files such as innovus_manual.txt, innovus命令手册.pdf, or docs/innovus_flow_commands are available or when the user asks to search the Innovus command manual.
+description: Look up the exact syntax, options, defaults, and short usage examples of named Cadence Innovus Tcl commands in the local Innovus Text Command Reference. Use when the user asks what a specific Innovus command or option means, or explicitly asks to search the local command manual. Do not use for diagnosing PnR failures, timing, CTS, routing, DRC, Tcl script bugs, or broader flow problems; use digital-ic-backend-debug for those tasks.
 ---
 
 # Innovus Command Lookup
 
+## Scope Boundary
+
+Handle exact manual lookup for named commands and options. Use flow notes only to
+explain the command's stage and prerequisites. Do not perform root-cause diagnosis
+or recommend a complete implementation flow; route those requests to
+`digital-ic-backend-debug`.
+
 ## Workflow
+
+Resolve paths once. `<INNOVUS_LOOKUP_DIR>` is the directory containing this
+`SKILL.md`, and `<IC_PYTHON>` is a verified interpreter. Use the user's project
+or current working directory as `$manualRoot`; verify it contains
+`innovus_manual.txt` or `docs/innovus_flow_commands` before searching. Never
+copy a username-specific skill path from an example.
+
+```powershell
+$skillRoot = (Resolve-Path -LiteralPath '<INNOVUS_LOOKUP_DIR>').Path
+$manualRoot = (Resolve-Path -LiteralPath '<INNOVUS_MANUAL_ROOT>').Path
+if (-not ((Test-Path -LiteralPath (Join-Path $manualRoot 'innovus_manual.txt')) -or
+          (Test-Path -LiteralPath (Join-Path $manualRoot 'docs\innovus_flow_commands')))) {
+  throw 'Innovus manual assets were not found under the selected root.'
+}
+```
 
 1. Confirm the working directory and locate the manual assets.
    - Prefer `innovus_manual.txt` for exact command extraction.
@@ -26,7 +48,7 @@ python tools\extract_innovus_command.py innovus_manual.txt <command>
    - Otherwise use this skill's helper:
 
 ```powershell
-python C:\Users\CYL04\.codex\skills\innovus-command-lookup\scripts\lookup_innovus_command.py . <command>
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\lookup_innovus_command.py') $manualRoot <command>
 ```
 
 4. Read the relevant flow note when available.

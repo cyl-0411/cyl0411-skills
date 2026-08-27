@@ -4,7 +4,7 @@
 
 Single source of truth for what decks exist: [`decks_index.json`](./decks_index.json) (`deck_id → { summary, canvas_format, page_count, primary_color }`). This README explains the kind; it does **not** enumerate decks.
 
-Full data model: [`docs/zh/templates-architecture.md`](../../../../docs/zh/templates-architecture.md).
+Full data model: [`docs/zh/templates-architecture.md`](../../docs/zh/templates-architecture.md).
 
 ---
 
@@ -58,8 +58,8 @@ When the user gives a deck path **with** a brand path or layout path, identity /
 
 1. Run [`workflows/create-template.md`](../../workflows/create-template.md) (default kind is `deck`)
 2. Resulting directory lands under `templates/decks/<id>/`
-3. Validate: `python3 skills/ppt-master/scripts/svg_quality_checker.py templates/decks/<id> --template-mode --format ppt169`
-4. Register: `python3 skills/ppt-master/scripts/register_template.py <id> --kind deck`
+3. Validate: `"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/svg_quality_checker.py templates/decks/<id> --template-mode --format ppt169`
+4. Register: `"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/register_template.py <id> --kind deck`
 
 The register step updates [`decks_index.json`](./decks_index.json) — the single source of truth for deck discovery.
 
@@ -69,4 +69,4 @@ The register step updates [`decks_index.json`](./decks_index.json) — the singl
 
 - [`templates/layouts/`](../layouts/) — structure-only templates without identity
 - [`templates/brands/`](../brands/) — identity-only presets without page rosters
-- [`docs/zh/templates-architecture.md`](../../../../docs/zh/templates-architecture.md) — three-class data model + fusion rules
+- [`docs/zh/templates-architecture.md`](../../docs/zh/templates-architecture.md) — three-class data model + fusion rules

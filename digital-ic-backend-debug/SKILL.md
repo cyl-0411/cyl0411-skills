@@ -1,6 +1,6 @@
 ---
 name: digital-ic-backend-debug
-description: Diagnose digital IC backend implementation problems by searching the local IC Backend Wiki, Innovus flow command notes, and Innovus Text Command Reference. Use when users report or ask about PnR, Innovus, ICC2, PrimeTime, StarRC, Calibre, RedHawk, timing, CTS, routing, floorplan, powerplan, IR/EM, DRC/LVS, ECO, Tcl script, command usage in a symptomatic diagnostic scenario (error code, violation, timing/DRC anomalies, etc.), or backend flow debug issues and need evidence-backed troubleshooting ideas plus manual-confirmed Innovus commands. For pure Innovus command syntax/usage lookup without a concrete problem, use innovus-command-lookup instead.
+description: Diagnose digital IC backend implementation problems by searching the local IC Backend Wiki, Innovus flow command notes, and Innovus Text Command Reference. Use when users report or ask about PnR, Innovus, ICC2, PrimeTime, StarRC, Calibre, RedHawk, timing, CTS, routing, floorplan, powerplan, IR/EM, DRC/LVS, ECO, Tcl script, command usage, error code, violation rule, or backend flow debug issues and need evidence-backed troubleshooting ideas plus manual-confirmed Innovus commands.
 ---
 
 # Digital IC Backend Debug
@@ -9,16 +9,37 @@ Use this skill to turn a backend issue report into an evidence-backed diagnostic
 
 ## Quick Start
 
-Default Wiki root for this machine:
+Resolve paths once before running a helper. `<BACKEND_DEBUG_DIR>` is the
+directory containing this `SKILL.md`; replace it with the loader-provided
+absolute path. Resolve `<IC_PYTHON>` to a real Python interpreter and require
+`"<IC_PYTHON>" -X utf8 -c "import sys"` to pass.
 
-```text
-C:\Users\CYL04\Desktop\IC_Backend_WIKI
+Resolve the Wiki root in this order: an explicit user path,
+`IC_BACKEND_ROOT`, the current directory when it contains `source_map.csv` or
+`innovus/innovus_manual.txt`, then the platform Desktop `IC-Backend` folder.
+Verify the selected root before use; never reuse a username or Desktop path
+copied from an example.
+
+```powershell
+$skillRoot = (Resolve-Path -LiteralPath '<BACKEND_DEBUG_DIR>').Path
+$wikiCandidates = @(
+  $env:IC_BACKEND_ROOT,
+  (Get-Location).Path,
+  (Join-Path ([Environment]::GetFolderPath('Desktop')) 'IC-Backend')
+) | Where-Object { $_ -and (Test-Path -LiteralPath $_) }
+$wikiRoot = $wikiCandidates | Where-Object {
+  (Test-Path -LiteralPath (Join-Path $_ 'source_map.csv')) -or
+  (Test-Path -LiteralPath (Join-Path $_ 'innovus\innovus_manual.txt'))
+} | Select-Object -First 1
+if (-not $wikiRoot) { throw 'IC Backend Wiki root was not found; provide it explicitly or set IC_BACKEND_ROOT.' }
+$wikiRoot = (Resolve-Path -LiteralPath $wikiRoot).Path
+$indexPath = Join-Path $wikiRoot '.codex\ic_backend_doc_index.json'
 ```
 
 If the index is missing or stale, build it:
 
 ```powershell
-python -X utf8 C:\Users\CYL04\.codex\skills\digital-ic-backend-debug\scripts\build_index.py --repo-root C:\Users\CYL04\Desktop\IC_Backend_WIKI --out C:\Users\CYL04\Desktop\IC_Backend_WIKI\.codex\ic_backend_doc_index.json --include-tags --include-innovus
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\build_index.py') --repo-root $wikiRoot --out $indexPath --include-tags --include-innovus
 ```
 
 Encoding note: the Wiki markdown and `source_map.csv` are UTF-8. If Chinese looks garbled in a Windows shell, check the shell or capture path before assuming the JSON bytes are broken. The builder now reads source files as strict UTF-8/UTF-8-SIG and writes UTF-8 JSON, so a real encoding problem fails fast instead of silently producing damaged metadata.
@@ -26,13 +47,13 @@ Encoding note: the Wiki markdown and `source_map.csv` are UTF-8. If Chinese look
 Search it:
 
 ```powershell
-python C:\Users\CYL04\.codex\skills\digital-ic-backend-debug\scripts\search_docs.py --index C:\Users\CYL04\Desktop\IC_Backend_WIKI\.codex\ic_backend_doc_index.json --query "postCTS timing突然变差" --top 8
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\search_docs.py') --index $indexPath --query "postCTS timing突然变差" --top 8
 ```
 
 Confirm Innovus commands before recommending them:
 
 ```powershell
-python C:\Users\CYL04\.codex\skills\digital-ic-backend-debug\scripts\confirm_innovus_commands.py --repo-root C:\Users\CYL04\Desktop\IC_Backend_WIKI --command setNanoRouteMode --command ecoRoute --format json
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\confirm_innovus_commands.py') --repo-root $wikiRoot --command setNanoRouteMode --command ecoRoute --format json
 ```
 
 If another copy of the Wiki is active, pass that path as `--repo-root` and write the index inside that workspace.
@@ -118,23 +139,23 @@ Use this shape unless the user asked for something narrower:
 Build a fresh index:
 
 ```powershell
-python -X utf8 C:\Users\CYL04\.codex\skills\digital-ic-backend-debug\scripts\build_index.py --repo-root C:\Users\CYL04\Desktop\IC_Backend_WIKI --out C:\Users\CYL04\Desktop\IC_Backend_WIKI\.codex\ic_backend_doc_index.json --include-tags --include-innovus
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\build_index.py') --repo-root $wikiRoot --out $indexPath --include-tags --include-innovus
 ```
 
 Search by issue:
 
 ```powershell
-python C:\Users\CYL04\.codex\skills\digital-ic-backend-debug\scripts\search_docs.py --index C:\Users\CYL04\Desktop\IC_Backend_WIKI\.codex\ic_backend_doc_index.json --query "VIA4.EN.12 DRC怎么修" --top 8
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\search_docs.py') --index $indexPath --query "VIA4.EN.12 DRC怎么修" --top 8
 ```
 
 Search with filters:
 
 ```powershell
-python C:\Users\CYL04\.codex\skills\digital-ic-backend-debug\scripts\search_docs.py --index C:\Users\CYL04\Desktop\IC_Backend_WIKI\.codex\ic_backend_doc_index.json --query "instance没有供上电" --tool redhawk --knowledge-area IR-EM --top 8
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\search_docs.py') --index $indexPath --query "instance没有供上电" --tool redhawk --knowledge-area IR-EM --top 8
 ```
 
 Confirm commands from the manual:
 
 ```powershell
-python C:\Users\CYL04\.codex\skills\digital-ic-backend-debug\scripts\confirm_innovus_commands.py --repo-root C:\Users\CYL04\Desktop\IC_Backend_WIKI --command loadViolationReport --command dbget --format text
+& '<IC_PYTHON>' -X utf8 (Join-Path $skillRoot 'scripts\confirm_innovus_commands.py') --repo-root $wikiRoot --command loadViolationReport --command dbget --format text
 ```

@@ -1,35 +1,39 @@
 ---
 name: web-access
 license: MIT
-github: https://github.com/eze-is/web-access
 description:
   所有联网操作必须通过此 skill 处理，包括：搜索、网页抓取、登录后操作、网络交互等。
   触发场景：用户要求搜索信息、查看网页内容、访问需要登录的网站、操作网页界面、抓取社交媒体内容（小红书、微博、推特等）、读取动态渲染页面、以及任何需要真实浏览器环境的网络任务。
 metadata:
   author: 一泽Eze
   version: "2.5.3"
+  github: "https://github.com/eze-is/web-access"
 ---
 
 # web-access Skill
 
 ## 前置检查
 
+以下命令中的 `<WEB_ACCESS_DIR>` 表示本 `SKILL.md` 所在目录。执行前将其
+替换为加载器提供的绝对路径；不要依赖某个 Agent 专用环境变量，也不要
+写死用户名。Windows PowerShell 示例使用 `curl.exe`，以避开 `curl` 别名。
+
 在开始联网操作前，先检查 CDP 模式可用性：
 
 ```bash
-node "${CLAUDE_SKILL_DIR}/scripts/check-deps.mjs"
+node "<WEB_ACCESS_DIR>/scripts/check-deps.mjs"
 ```
 
 **Node.js 22+** 必需（使用原生 WebSocket）。
 
 按脚本输出处理：
 - `exit 0` → 继续
-- `exit 2` → 需询问用户偏好，写入 `${CLAUDE_SKILL_DIR}/config.env` 的 `WEB_ACCESS_BROWSER`
+- `exit 2` → 需询问用户偏好，写入 `<WEB_ACCESS_DIR>/config.env` 的 `WEB_ACCESS_BROWSER`
 - `exit 1` → 按 stdout 错误信息处理。若提示包含「Agent 处理顺序」，按其步骤执行（如先用系统命令打开浏览器后重跑），自动可解则不打扰用户；仍失败再向用户求助
 
 支持参数 `--browser <chrome|edge>` 表达本次临时覆盖（不写 config.env）。
 
-切换浏览器时，proxy 是长驻进程，需先 `pkill -f cdp-proxy.mjs` 再重跑 check-deps。
+切换浏览器时，proxy 是长驻进程，需先 `node "<WEB_ACCESS_DIR>/scripts/stop-proxy.mjs"` 再重跑 check-deps。
 
 检查通过后并必须在回复中向用户直接展示以下须知，再启动 CDP Proxy 执行操作：
 
@@ -57,15 +61,15 @@ node "${CLAUDE_SKILL_DIR}/scripts/check-deps.mjs"
 
 | 场景 | 工具 |
 |------|------|
-| 搜索摘要或关键词结果，发现信息来源 | **WebSearch** |
-| URL 已知，需要从页面定向提取特定信息 | **WebFetch**（拉取网页内容，由小模型根据 prompt 提取，返回处理后结果） |
+| 搜索摘要或关键词结果，发现信息来源 | **内置 Web 搜索** |
+| URL 已知，需要从页面定向提取特定信息 | **内置页面打开/提取**（拉取网页内容，由小模型根据 prompt 提取，返回处理后结果） |
 | URL 已知，需要原始 HTML 源码（meta、JSON-LD 等结构化字段） | **curl** |
 | 非公开内容，或已知静态层无效的平台（小红书、微信公众号等公开内容也被反爬限制） | **浏览器 CDP**（直接，跳过静态层） |
 | 需要登录态、交互操作，或需要像人一样在浏览器内自由导航探索 | **浏览器 CDP** |
 
-浏览器 CDP 不要求 URL 已知——可从任意入口出发，通过页面内搜索、点击、跳转等方式找到目标内容。WebSearch、WebFetch、curl 均不处理登录态。
+浏览器 CDP 不要求 URL 已知——可从任意入口出发，通过页面内搜索、点击、跳转等方式找到目标内容。内置 Web 搜索、内置页面打开/提取、curl 均不处理登录态。
 
-**Jina**（可选预处理层，可与 WebFetch/curl 组合使用，由于其特性可节省 tokens 消耗，请积极在任务合适时组合使用）：第三方网络服务，可将网页转为 Markdown，大幅节省 token 但可能有信息损耗。调用方式为 `r.jina.ai/example.com`（URL 前加前缀，不保留原网址 http 前缀），限 20 RPM。适合文章、博客、文档、PDF 等以正文为核心的页面；对数据面板、商品页等非文章结构页面可能提取到错误区块。
+**Jina**（可选预处理层，可与 内置页面打开/提取/curl 组合使用，由于其特性可节省 tokens 消耗，请积极在任务合适时组合使用）：第三方网络服务，可将网页转为 Markdown，大幅节省 token 但可能有信息损耗。调用方式为 `r.jina.ai/example.com`（URL 前加前缀，不保留原网址 http 前缀），限 20 RPM。适合文章、博客、文档、PDF 等以正文为核心的页面；对数据面板、商品页等非文章结构页面可能提取到错误区块。
 
 进入浏览器层后，`/eval` 就是你的眼睛和手：
 
@@ -80,7 +84,7 @@ node "${CLAUDE_SKILL_DIR}/scripts/check-deps.mjs"
 用户指向**本人访问过的页面**（"我之前看的那个讲 X 的文章"、"上次打开过的 XX 面板"）或**组织内部系统**（"我们的 XX 平台"、"公司那个 YY 系统"等公网搜不到的目标）时，检索本地浏览器（Chrome / Edge）书签/历史：
 
 ```bash
-node "${CLAUDE_SKILL_DIR}/scripts/find-url.mjs" [关键词...] [--only bookmarks|history] [--browser chrome|edge] [--limit N] [--since 1d|7h|YYYY-MM-DD] [--sort recent|visits]
+node "<WEB_ACCESS_DIR>/scripts/find-url.mjs" [关键词...] [--only bookmarks|history] [--browser chrome|edge] [--limit N] [--since 1d|7h|YYYY-MM-DD] [--sort recent|visits]
 ```
 
 关键词空格分词、多词 AND，匹配 title + url（可省略）；默认遍历所有已安装的 Chromium 系浏览器（Chrome、Edge），`--browser` 限定单一来源；`--since` / `--sort` 仅作用于历史；默认按最近访问倒序，`--sort visits` 按访问次数排序（适合"高频访问的网站"这类场景）。
@@ -104,7 +108,7 @@ node "${CLAUDE_SKILL_DIR}/scripts/find-url.mjs" [关键词...] [--only bookmarks
 ### 启动
 
 ```bash
-node "${CLAUDE_SKILL_DIR}/scripts/check-deps.mjs"
+node "<WEB_ACCESS_DIR>/scripts/check-deps.mjs"
 ```
 
 脚本会依次检查 Node.js、浏览器调试端口，并确保 Proxy 已连接（未运行则自动启动并等待）。Proxy 启动后持续运行。
@@ -115,39 +119,39 @@ node "${CLAUDE_SKILL_DIR}/scripts/check-deps.mjs"
 
 ```bash
 # 列出用户已打开的 tab
-curl -s http://localhost:3456/targets
+curl.exe -s http://localhost:3456/targets
 
 # 创建新后台 tab（自动等待加载）— URL 走 POST body，避免目标 URL 含 query 时被切分
-curl -s -X POST --data-raw 'https://example.com' http://localhost:3456/new
+curl.exe -s -X POST --data-raw 'https://example.com' http://localhost:3456/new
 
 # 页面信息
-curl -s "http://localhost:3456/info?target=ID"
+curl.exe -s "http://localhost:3456/info?target=ID"
 
 # 执行任意 JS：可读写 DOM、提取数据、操控元素、触发状态变更、提交表单、调用内部方法
-curl -s -X POST "http://localhost:3456/eval?target=ID" -d 'document.title'
+curl.exe -s -X POST "http://localhost:3456/eval?target=ID" -d 'document.title'
 
 # 捕获页面渲染状态（含视频当前帧）
-curl -s "http://localhost:3456/screenshot?target=ID&file=/tmp/shot.png"
+curl.exe -s "http://localhost:3456/screenshot?target=ID&file=<ABSOLUTE_OUTPUT_PATH>"
 
 # 导航（URL 走 POST body，target 走 query）、后退
-curl -s -X POST --data-raw 'https://example.com' "http://localhost:3456/navigate?target=ID"
-curl -s "http://localhost:3456/back?target=ID"
+curl.exe -s -X POST --data-raw 'https://example.com' "http://localhost:3456/navigate?target=ID"
+curl.exe -s "http://localhost:3456/back?target=ID"
 
 # 点击（POST body 为 CSS 选择器）— JS el.click()，简单快速，覆盖大多数场景
-curl -s -X POST "http://localhost:3456/click?target=ID" -d 'button.submit'
+curl.exe -s -X POST "http://localhost:3456/click?target=ID" -d 'button.submit'
 
 # 真实鼠标点击 — CDP Input.dispatchMouseEvent，算用户手势，能触发文件对话框
-curl -s -X POST "http://localhost:3456/clickAt?target=ID" -d 'button.upload'
+curl.exe -s -X POST "http://localhost:3456/clickAt?target=ID" -d 'button.upload'
 
 # 文件上传 — 直接设置 file input 的本地文件路径，绕过文件对话框
-curl -s -X POST "http://localhost:3456/setFiles?target=ID" -d '{"selector":"input[type=file]","files":["/path/to/file.png"]}'
+curl.exe -s -X POST "http://localhost:3456/setFiles?target=ID" -d '{"selector":"input[type=file]","files":["/path/to/file.png"]}'
 
 # 滚动（触发懒加载）
-curl -s "http://localhost:3456/scroll?target=ID&y=3000"
-curl -s "http://localhost:3456/scroll?target=ID&direction=bottom"
+curl.exe -s "http://localhost:3456/scroll?target=ID&y=3000"
+curl.exe -s "http://localhost:3456/scroll?target=ID&direction=bottom"
 
 # 关闭 tab
-curl -s "http://localhost:3456/close?target=ID"
+curl.exe -s "http://localhost:3456/close?target=ID"
 ```
 
 ### 页面内导航
@@ -206,7 +210,7 @@ Proxy 持续运行，不建议主动停止——重启后需要在浏览器中�
 
 **子 Agent Prompt 写法：目标导向，而非步骤指令**
 - 必须在子 Agent prompt 中写 `必须加载 web-access skill 并遵循指引` ，子 Agent 会自动加载 skill，无需在 prompt 中复制 skill 内容或指定路径。
-- 子 Agent 有自主判断能力。主 Agent 的职责是说清楚**要什么**，仅在必要与确信时限定**怎么做**。过度指定步骤会剥夺子 Agent 的判断空间，反而引入主 Agent 的假设错误。**避免 prompt 用词对子 Agent 行为的暗示**：「搜索xx」会把子 Agent 锚定到 WebSearch，而实际上有些反爬站点需要 CDP 直接访问主站才能有效获取内容。主 Agent 写 prompt 时应描述目标（「获取」「调研」「了解」），避免用暗示具体手段的动词（「搜索」「抓取」「爬取」）。
+- 子 Agent 有自主判断能力。主 Agent 的职责是说清楚**要什么**，仅在必要与确信时限定**怎么做**。过度指定步骤会剥夺子 Agent 的判断空间，反而引入主 Agent 的假设错误。**避免 prompt 用词对子 Agent 行为的暗示**：「搜索xx」会把子 Agent 锚定到 内置 Web 搜索，而实际上有些反爬站点需要 CDP 直接访问主站才能有效获取内容。主 Agent 写 prompt 时应描述目标（「获取」「调研」「了解」），避免用暗示具体手段的动词（「搜索」「抓取」「爬取」）。
 
 **分治判断标准：**
 
@@ -214,7 +218,7 @@ Proxy 持续运行，不建议主动停止——重启后需要在浏览器中�
 |----------|-----------|
 | 目标相互独立，结果互不依赖 | 目标有依赖关系，下一个需要上一个的结果 |
 | 每个子任务量足够大（多页抓取、多轮搜索） | 简单单页查询，分治开销大于收益 |
-| 需要 CDP 浏览器或长时间运行的任务 | 几次 WebSearch / Jina 就能完成的轻量查询 |
+| 需要 CDP 浏览器或长时间运行的任务 | 几次 内置 Web 搜索 / Jina 就能完成的轻量查询 |
 
 ## 信息核实类任务
 

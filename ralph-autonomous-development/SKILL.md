@@ -1,6 +1,6 @@
 ---
 name: ralph-autonomous-development
-description: "Run a complete Ralph-style autonomous coding workflow in any git repository: stress-test a plan with grill-me or grill-with-docs, turn hardened decisions into PRD markdown, convert it to prd.json, create or update scripts/ralph/AGENTS.md and scripts/ralph/ralph.sh, launch Codex/Claude/Amp one-story-per-iteration loops, supervise progress.txt, validate, commit, push, and finish safely. Use when the user asks to set up, learn, create, run, or operate automated Ralph development."
+description: "Run a repository-local Ralph-style autonomous development workflow: harden requirements, create a PRD and prd.json, configure Ralph handoff files, launch one-story-per-iteration agent loops, supervise progress, validate, and finish safely. Use when the user asks to set up, explain, run, or repair Ralph autonomous development."
 ---
 
 # Ralph Autonomous Development
@@ -9,7 +9,7 @@ Use this skill to create or operate a repository-local autonomous development lo
 
 ```text
 feature intent
-  -> grill-me / grill-with-docs decision hardening
+  -> direct Phase 0 interview / grill-with-docs decision hardening
   -> PRD markdown
   -> prd.json story checklist
   -> scripts/ralph/AGENTS.md iteration prompt
@@ -24,7 +24,7 @@ Identify the user's intent:
 
 - **Learn/explain:** explain the workflow and point to the file contracts.
 - **Set up in a repo:** create the Ralph files and templates.
-- **Harden a plan:** use `grill-me` or `grill-with-docs` before writing the PRD.
+- **Harden a plan:** conduct the Phase 0 interview directly, or use `grill-with-docs` when repository documentation must constrain the decisions.
 - **Convert an existing PRD:** use the `ralph` skill to produce `prd.json`.
 - **Start from a rough idea:** use the `prd` skill first, then `ralph`.
 - **Run the loop:** verify files, run dry-run, launch with the requested tool.
@@ -32,11 +32,11 @@ Identify the user's intent:
 
 Use this skill together with:
 
-- `grill-me` when the plan, scope, risk, or implementation boundaries are still fuzzy.
+- A direct one-question-at-a-time Phase 0 interview when the plan, scope, risk, or implementation boundaries are still fuzzy.
 - `grill-with-docs` when the repository has architecture docs, ADRs, domain docs, or strong local terminology that should shape the PRD.
 - `prd` when the source PRD markdown does not exist yet.
 - `ralph` when converting a PRD markdown into `prd.json`.
-- `write-a-skill` or `skill-creator` only when improving this skill itself.
+- `skill-creator` only when improving this skill itself.
 
 ## Repository Preflight
 
@@ -61,10 +61,10 @@ If the worktree is dirty, do not overwrite unrelated user changes. If an existin
 
 Before writing the PRD, run a short but serious design interrogation.
 
-Use `grill-me` when the project has mostly conversational context:
+Conduct the Phase 0 decision-hardening interview directly when the project has mostly conversational context:
 
 ```text
-Use grill-me to stress-test this plan before we write the Ralph PRD.
+Stress-test this plan one decision at a time before writing the Ralph PRD.
 Ask one question at a time. Recommend an answer for each question.
 Focus on scope, non-goals, validation, rollback, and hidden dependencies.
 ```

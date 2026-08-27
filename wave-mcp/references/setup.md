@@ -1,21 +1,38 @@
 # Local setup and maintenance
 
-This workstation uses the following verified layout:
+Resolve the local layout before maintenance. Prefer `CODEX_HOME`; otherwise use
+the current user's `.codex` directory. The WSL distribution is a configured
+value, while the Linux home and Windows-to-WSL source path are discovered at
+runtime:
 
-- WSL distribution: `IC-EDA` (Rocky Linux 8.10, x86_64)
-- Runtime: `/home/ray/.local/opt/wave-mcp/.venv`
-- Source clone: `C:\Users\CYL04\.codex\vendor_imports\wave-mcp`
-- Installed upstream: `Tencent/wave-mcp` version `0.1.1`
-- Optional VCD converter: `/usr/bin/vcd2fst` from GTKWave 3.3.118
+```powershell
+$waveCodexRoot = if ($env:CODEX_HOME) {
+  $env:CODEX_HOME
+} else {
+  Join-Path $env:USERPROFILE '.codex'
+}
+$waveCodexRoot = (Resolve-Path -LiteralPath $waveCodexRoot).Path
+$waveSourceRoot = (Resolve-Path -LiteralPath (Join-Path $waveCodexRoot 'vendor_imports\wave-mcp')).Path
+$waveDistro = if ($env:WAVE_MCP_WSL_DISTRO) { $env:WAVE_MCP_WSL_DISTRO } else { '<WAVE_WSL_DISTRO>' }
+$waveLinuxHome = (wsl.exe -d $waveDistro -- sh -lc 'printf %s "$HOME"').Trim()
+$waveRuntime = "$waveLinuxHome/.local/opt/wave-mcp/.venv"
+$waveSourceWsl = (wsl.exe -d $waveDistro -- wslpath -a $waveSourceRoot).Trim()
+if (-not $waveLinuxHome -or -not $waveSourceWsl) { throw 'Unable to resolve wave-mcp WSL paths.' }
+```
+
+The currently installed upstream is `Tencent/wave-mcp` version `0.1.1`; the
+optional VCD converter is normally `vcd2fst` from GTKWave.
 
 ## Codex MCP configuration
 
-The global `C:\Users\CYL04\.codex\config.toml` contains:
+The global `<CODEX_HOME>/config.toml` entry should resolve the Linux home inside
+WSL rather than embedding a username. Substitute the configured distribution at
+configuration time:
 
 ```toml
 [mcp_servers.wave-mcp]
 command = "wsl.exe"
-args = ["-d", "IC-EDA", "--", "/home/ray/.local/opt/wave-mcp/.venv/bin/wave-mcp"]
+args = ["-d", "<WAVE_WSL_DISTRO>", "--", "bash", "-lc", "exec \"$HOME/.local/opt/wave-mcp/.venv/bin/wave-mcp\""]
 startup_timeout_sec = 120
 tool_timeout_sec = 300
 ```
@@ -28,8 +45,8 @@ policy remains in effect.
 Run these from Windows PowerShell:
 
 ```powershell
-wsl -d IC-EDA -- /home/ray/.local/opt/wave-mcp/.venv/bin/python -c "import wave_mcp,pylibfst,pyslang; print(wave_mcp.__version__)"
-wsl -d IC-EDA -- /home/ray/.local/opt/wave-mcp/.venv/bin/wave-mcp query --list
+wsl.exe -d $waveDistro -- "$waveRuntime/bin/python" -c "import wave_mcp,pylibfst,pyslang; print(wave_mcp.__version__)"
+wsl.exe -d $waveDistro -- "$waveRuntime/bin/wave-mcp" query --list
 codex mcp list
 ```
 
@@ -42,8 +59,8 @@ Pull the source clone, review upstream changes, then reinstall it into the
 existing isolated environment:
 
 ```powershell
-git -C C:\Users\CYL04\.codex\vendor_imports\wave-mcp pull --ff-only
-wsl -d IC-EDA -- /home/ray/.local/opt/wave-mcp/.venv/bin/python -m pip install --upgrade /mnt/c/Users/CYL04/.codex/vendor_imports/wave-mcp
+git -C $waveSourceRoot pull --ff-only
+wsl.exe -d $waveDistro -- "$waveRuntime/bin/python" -m pip install --upgrade $waveSourceWsl
 ```
 
 Re-run the verification commands and the upstream static-analysis example

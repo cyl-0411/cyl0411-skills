@@ -3,11 +3,11 @@
 ## TL;DR
 
 ```diff
-- curl -s "http://localhost:3456/new?url=https://example.com"
-+ curl -s -X POST --data-raw 'https://example.com' http://localhost:3456/new
+- curl.exe -s "http://localhost:3456/new?url=https://example.com"
++ curl.exe -s -X POST --data-raw 'https://example.com' http://localhost:3456/new
 
-- curl -s "http://localhost:3456/navigate?target=ID&url=https://example.com"
-+ curl -s -X POST --data-raw 'https://example.com' "http://localhost:3456/navigate?target=ID"
+- curl.exe -s "http://localhost:3456/navigate?target=ID&url=https://example.com"
++ curl.exe -s -X POST --data-raw 'https://example.com' "http://localhost:3456/navigate?target=ID"
 ```
 
 旧写法收到 `400` + 包含本文档路径的错误信息后，按下方对照表改写调用。同时把发现的旧写法在源站点经验文件中就地修正。

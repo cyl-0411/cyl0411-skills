@@ -2,7 +2,7 @@
 
 Write the PRD as an executable contract for future fresh agents.
 
-Before writing, run `grill-me` or `grill-with-docs` to harden the plan. Copy the accepted conclusions into the PRD. Ralph should execute decisions, not discover them halfway through implementation.
+Before writing, conduct the Phase 0 interview directly or use `grill-with-docs` to harden the plan. Copy the accepted conclusions into the PRD. Ralph should execute decisions, not discover them halfway through implementation.
 
 ## Required Shape
 

@@ -86,7 +86,7 @@ async function ensureProxy(expectedBrowserId, browserOverride) {
     const runningLabel = health.browser?.label || runningId || 'unknown';
     if (expectedBrowserId && runningId && runningId !== 'unknown' && runningId !== expectedBrowserId) {
       console.log(`proxy: 浏览器不一致 — 当前已连着 ${runningLabel}，但本次需要 ${expectedBrowserId}`);
-      console.log('  请在终端运行 pkill -f cdp-proxy.mjs 重置后再试');
+      console.log('  请运行 node scripts/stop-proxy.mjs 重置后再试');
       return false;
     }
     console.log(`proxy: ready (${runningLabel})`);
@@ -154,7 +154,7 @@ async function resolveAndReport(override) {
       const sourceDesc = result.source === 'override' ? '本次指定' : '默认偏好';
       console.log(`browser: error — ${sourceDesc}的浏览器是 "${expected}" (${expectedLabel})，但没连上`);
       console.log(`  Agent 处理顺序：`);
-      console.log(`    1. 先用系统命令打开 ${expectedLabel}（按你所在平台自行选择，如 macOS 的 open -a），再重新运行 node check-deps.mjs`);
+      console.log(`    1. 先正常打开 ${expectedLabel}，再重新运行 node check-deps.mjs`);
       console.log(`    2. 若仍报相同错误，可能是因为远程调试开关没启用 —— 告诉用户：在 ${expectedLabel} 的地址栏访问 ${expected}://inspect/#remote-debugging，勾选 "Allow remote debugging for this browser instance"`);
       printAvailableHint(result.detected);
       if (result.source === 'preference') {

@@ -16,24 +16,29 @@ Use the actual QEC decoding outcome as the primary success signal. Classificatio
    - latest `model/figures/experiment_comparison.csv`
    - latest `model/figures/<experiment>/baseline_comparison.json`
    - latest `model/figures/<experiment>/selective_operating_point*.json`
-   - latest `simulation/results/**/feedback.json` or `summary.json`
+   - latest `simulation/results/**/feedback.json`, `summary.json`, `gated_validation_summary.csv`, or `gated_validation_summary.md`
 
-2. Prefer the workflow CLI when available:
+2. Run commands from the Q-Whisperer repository root. Resolve `<QSNARE_PYTHON>`
+   once: prefer `.venv/Scripts/python.exe` on Windows or `.venv/bin/python` on
+   POSIX, and require `"<QSNARE_PYTHON>" -X utf8 -c "import torch, stim, pymatching"`
+   to pass. Do not fall back to an unrelated system Python. For the current
+   accepted baseline, prefer the runtime-gated validation CLI:
 
 ```powershell
-python -m simulation.run_closed_loop_workflow `
-  --model-config model/configs/20k_w32_zscore_extreme.yaml `
-  --instances 100 --shots-per-instance 1000 `
-  --hotspot-multiplier-min 100 --hotspot-multiplier-max 100 `
-  --device auto --num-workers auto
+"<QSNARE_PYTHON>" -X utf8 -m simulation.run_gated_policy_validation `
+  --policy-manifest simulation/policies/runtime_gated_v2.yaml `
+  --policy-mode gated `
+  --instances 2 `
+  --shots-per-instance 100 `
+  --device auto
 ```
 
-3. Use aggressive noise scans when classifier metrics look good but QEC LER is not improving:
-   - `100x-100x` for a controlled strong-hotspot check.
-   - `100x-1000x` for stress testing.
-   - Keep `instances` and `shots-per-instance` small for smoke tests, then scale only after the pipeline is green.
+3. Scale accepted-policy validation only after the smoke test passes:
+   - Single-seed 100k: add `--seed 7101 --instances 100 --shots-per-instance 1000 --output-root simulation/results/gated_policy_validation_full`.
+   - The manifest defines scenarios `x50`, `x100`, `x300`, `x1000`, and `x50-x1000`; keep paired raw-versus-adjusted samples.
+   - Use `"<QSNARE_PYTHON>" -X utf8 -m simulation.run_closed_loop_workflow` only for historical or experimental single-model scans.
 
-4. Treat the existing `simulation/` package as QEC-SIM unless the user provides an external simulator path. It uses Stim for detector sampling and PyMatching for decoding.
+4. Treat the repository's `simulation/` package as QEC-SIM unless the user provides an external simulator path. It uses Stim for detector sampling and PyMatching for decoding.
 
 ## Success Criteria
 

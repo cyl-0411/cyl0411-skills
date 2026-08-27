@@ -153,44 +153,47 @@ and one synthesizer, not seven reviewers.
 
 ## Verification
 
+Resolve `<ARS_PYTHON>` using the Python-runtime policy in the root `SKILL.md`;
+it is a placeholder, not a literal executable name.
+
 Run the adapter smoke/parity checks from the repository root:
 
-```bash
-python3 skills/academic-research-suite/codex/scripts/ars_codex_quality_gates.py all
-python3 -m pytest skills/academic-research-suite/codex/tests
-python3 skills/academic-research-suite/codex/scripts/ars_codex_topology_experiment.py validate --require-runs
+```text
+<ARS_PYTHON> -X utf8 skills/academic-research-suite/codex/scripts/ars_codex_quality_gates.py all
+<ARS_PYTHON> -X utf8 -m pytest skills/academic-research-suite/codex/tests
+<ARS_PYTHON> -X utf8 skills/academic-research-suite/codex/scripts/ars_codex_topology_experiment.py validate --require-runs
 ```
 
 Run upstream validators from the vendored ARS root as needed:
 
-```bash
+```text
 cd skills/academic-research-suite/ars
-python3 -m pytest scripts/test_codex_router_policy.py
-python3 scripts/check_passport_reset_contract.py
-python3 scripts/check_v3_9_2_phase_boundary.py
-python3 scripts/check_cross_model_handoff_contract.py
-python3 scripts/check_degradation_registry.py
-python3 scripts/check_pipeline_boundary_semantics.py
-python3 scripts/check_tools_allowlist.py
-python3 scripts/check_data_flows.py
-python3 scripts/check_control_availability.py
-python3 scripts/check_stage_capability_matrix.py
-python3 scripts/check_risk_register.py
-python3 -m pytest scripts/test_verification_cache.py scripts/test_verification_gate.py
-python3 -m pytest scripts/test_ars_update_check.py
-python3 -m pytest scripts/test_pdf_read_preflight.py scripts/test_ars_mark_read.py
-python3 -m pytest scripts/test_check_revision_token_conservation.py
-python3 -m pytest scripts/test_cross_model_codex_transport.py
-python3 scripts/check_630_codex_subscription_transport.py
-python3 scripts/check_evidence_row_integration.py
-python3 scripts/check_670_revision_roadmap_integration.py
-python3 scripts/check_684_review_criteria_binding.py
-python3 scripts/check_human_subjects_output_contract.py
-python3 scripts/check_bibliographic_integrity_signals.py
-python3 scripts/check_cross_document_consistency_advisory_integration.py
-python3 -m pytest scripts/test_research_workflow_profile.py scripts/test_inquiry_branch_ledger.py
-python3 -m pytest scripts/test_check_data_access_level.py scripts/test_review_criteria_binding.py
-python3 -m pytest scripts/test_check_promotion_bakeoff_preregistration.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_codex_router_policy.py
+<ARS_PYTHON> -X utf8 scripts/check_passport_reset_contract.py
+<ARS_PYTHON> -X utf8 scripts/check_v3_9_2_phase_boundary.py
+<ARS_PYTHON> -X utf8 scripts/check_cross_model_handoff_contract.py
+<ARS_PYTHON> -X utf8 scripts/check_degradation_registry.py
+<ARS_PYTHON> -X utf8 scripts/check_pipeline_boundary_semantics.py
+<ARS_PYTHON> -X utf8 scripts/check_tools_allowlist.py
+<ARS_PYTHON> -X utf8 scripts/check_data_flows.py
+<ARS_PYTHON> -X utf8 scripts/check_control_availability.py
+<ARS_PYTHON> -X utf8 scripts/check_stage_capability_matrix.py
+<ARS_PYTHON> -X utf8 scripts/check_risk_register.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_verification_cache.py scripts/test_verification_gate.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_ars_update_check.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_pdf_read_preflight.py scripts/test_ars_mark_read.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_check_revision_token_conservation.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_cross_model_codex_transport.py
+<ARS_PYTHON> -X utf8 scripts/check_630_codex_subscription_transport.py
+<ARS_PYTHON> -X utf8 scripts/check_evidence_row_integration.py
+<ARS_PYTHON> -X utf8 scripts/check_670_revision_roadmap_integration.py
+<ARS_PYTHON> -X utf8 scripts/check_684_review_criteria_binding.py
+<ARS_PYTHON> -X utf8 scripts/check_human_subjects_output_contract.py
+<ARS_PYTHON> -X utf8 scripts/check_bibliographic_integrity_signals.py
+<ARS_PYTHON> -X utf8 scripts/check_cross_document_consistency_advisory_integration.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_research_workflow_profile.py scripts/test_inquiry_branch_ledger.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_check_data_access_level.py scripts/test_review_criteria_binding.py
+<ARS_PYTHON> -X utf8 -m pytest scripts/test_check_promotion_bakeoff_preregistration.py
 ```
 
 Do not run `check_promotion_bakeoff_preregistration.py verify-tree` from this

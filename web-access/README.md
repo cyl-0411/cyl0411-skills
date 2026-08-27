@@ -25,7 +25,7 @@
   <a href="https://web-access.eze.is">🌐 官网</a> · <a href="https://mp.weixin.qq.com/s/rps5YVB6TchT9npAaIWKCw">📖 设计详解</a> · <a href="#安装">⚡ 快速安装</a>
 </p>
 
-AI Agent 原本的联网能力（WebSearch、WebFetch）缺少调度策略和浏览器自动化能力。这个 Agent Skill 补上的是：**联网策略 + CDP 浏览器操作 + 站点经验积累**。兼容所有支持 SKILL.md 的 Agent（Claude Code、Cursor、Gemini CLI、Codex CLI 等）。
+AI Agent 原本的联网能力（内置 Web 搜索、内置页面打开/提取）缺少调度策略和浏览器自动化能力。这个 Agent Skill 补上的是：**联网策略 + CDP 浏览器操作 + 站点经验积累**。兼容所有支持 SKILL.md 的 Agent（Claude Code、Cursor、Gemini CLI、Codex CLI 等）。
 
 > 推荐必读：[Web Access：一个 Skill，拉满 Agent 联网和浏览器能力](https://mp.weixin.qq.com/s/rps5YVB6TchT9npAaIWKCw) ，完整介绍了 Web-Access Skill 的开发细节与 Agent Skill 设计哲学，帮助你也能写出类似通用、高上限的 Skill
 
@@ -35,7 +35,7 @@ AI Agent 原本的联网能力（WebSearch、WebFetch）缺少调度策略和浏
 
 | 能力 | 说明 |
 |------|------|
-| 联网工具自动选择 | WebSearch / WebFetch / curl / Jina / CDP，按场景自主判断，可任意组合 |
+| 联网工具自动选择 | 内置 Web 搜索 / 内置页面打开/提取 / curl / Jina / CDP，按场景自主判断，可任意组合 |
 | CDP Proxy 浏览器操作 | 直连用户日常浏览器（Chrome / Edge / Chromium 系），天然携带登录态，支持动态页面、交互操作、视频截帧 |
 | 三种点击方式 | `/click`（JS click）、`/clickAt`（CDP 真实鼠标事件）、`/setFiles`（文件上传） |
 | 本地浏览器书签/历史检索 | `find-url.mjs` 跨 Chrome / Edge 查询公网搜不到的目标（内部系统）或用户访问过的页面，支持关键词/时间窗/访问频度排序 |
@@ -56,7 +56,7 @@ AI Agent 原本的联网能力（WebSearch、WebFetch）缺少调度策略和浏
 
 <details><summary>v2.4.3 更新</summary>
 
-- **修复 CLAUDE_SKILL_DIR 路径问题** — bash 代码块改用 `${CLAUDE_SKILL_DIR}` 字符串替换语法，修复 Windows Git Bash 路径转换错误和变量未设置问题（#47 #46）
+- **修复旧加载器路径变量问题** — 命令统一使用 `<WEB_ACCESS_DIR>` 绝对目录占位，避免 Windows 路径转换和变量未设置问题（#47 #46）
 - **站点经验列表合并到前置检查** — 启动检查通过后自动输出已有站点经验列表，移除不可靠的 `!` 内联注入
 </details>
 
@@ -106,7 +106,7 @@ claude plugin install web-access@web-access --scope user
 **方式四：手动**
 
 ```bash
-git clone https://github.com/eze-is/web-access ~/.claude/skills/web-access
+git clone https://github.com/eze-is/web-access <WEB_ACCESS_DIR>
 ```
 
 ## 前置配置（CDP 模式）
@@ -120,7 +120,7 @@ CDP 模式需要 **Node.js 22+** 和浏览器（Chrome / Edge）开启远程调�
 
 ### 浏览器偏好（config.env）
 
-skill 长期偏好保存在 `${CLAUDE_SKILL_DIR}/config.env`（首次运行自动从 `config.env.template` 创建，gitignored）：
+skill 长期偏好保存在 `<WEB_ACCESS_DIR>/config.env`（首次运行自动从 `config.env.template` 创建，gitignored）：
 
 ```bash
 # 留空 = 每次启动都询问偏好；设值 = 固定使用该浏览器
@@ -132,21 +132,21 @@ WEB_ACCESS_BROWSER=edge
 **临时用别的浏览器**（不修改 config.env）：
 
 ```bash
-node "${CLAUDE_SKILL_DIR}/scripts/check-deps.mjs" --browser chrome
+node "<WEB_ACCESS_DIR>/scripts/check-deps.mjs" --browser chrome
 ```
 
 **切换浏览器**（proxy 已连接旧的）：
 
 ```bash
-pkill -f cdp-proxy.mjs && node "${CLAUDE_SKILL_DIR}/scripts/check-deps.mjs"
+node "<WEB_ACCESS_DIR>/scripts/stop-proxy.mjs" && node "<WEB_ACCESS_DIR>/scripts/check-deps.mjs"
 ```
 
 环境检查（Agent 运行时会自动完成前置检查，无需手动执行）：
 
 ```bash
-node "${CLAUDE_SKILL_DIR}/scripts/check-deps.mjs"
-# $CLAUDE_SKILL_DIR 是 skill 加载时自动设置的环境变量
-# 手动运行请替换为实际路径，如 ~/.claude/skills/web-access
+node "<WEB_ACCESS_DIR>/scripts/check-deps.mjs"
+# <WEB_ACCESS_DIR> 是 skill 加载时自动设置的环境变量
+# 手动运行请替换为实际路径，如 <WEB_ACCESS_DIR>
 ```
 
 ## CDP Proxy API
@@ -155,19 +155,19 @@ Proxy 通过 WebSocket 直连浏览器（兼容 `chrome://inspect` / `edge://ins
 
 ```bash
 # 启动（Agent 会自动管理 Proxy 生命周期，无需手动启动）
-node "${CLAUDE_SKILL_DIR}/scripts/cdp-proxy.mjs" &
+node "<WEB_ACCESS_DIR>/scripts/cdp-proxy.mjs" &
 
 # 页面操作
-curl -s -X POST --data-raw 'https://example.com' http://localhost:3456/new  # 新建 tab（v2.5.3 起 URL 走 POST body）
-curl -s -X POST "http://localhost:3456/eval?target=ID" -d 'document.title'  # 执行 JS
-curl -s -X POST "http://localhost:3456/click?target=ID" -d 'button.submit'  # JS 点击
-curl -s -X POST "http://localhost:3456/clickAt?target=ID" -d '.upload-btn'  # 真实鼠标点击
-curl -s -X POST "http://localhost:3456/setFiles?target=ID" \
+curl.exe -s -X POST --data-raw 'https://example.com' http://localhost:3456/new  # 新建 tab（v2.5.3 起 URL 走 POST body）
+curl.exe -s -X POST "http://localhost:3456/eval?target=ID" -d 'document.title'  # 执行 JS
+curl.exe -s -X POST "http://localhost:3456/click?target=ID" -d 'button.submit'  # JS 点击
+curl.exe -s -X POST "http://localhost:3456/clickAt?target=ID" -d '.upload-btn'  # 真实鼠标点击
+curl.exe -s -X POST "http://localhost:3456/setFiles?target=ID" \
   -d '{"selector":"input[type=file]","files":["/path/to/file.png"]}'        # 文件上传
-curl -s "http://localhost:3456/screenshot?target=ID&file=/tmp/shot.png"     # 截图
-curl -s "http://localhost:3456/scroll?target=ID&direction=bottom"           # 滚动
-curl -s "http://localhost:3456/close?target=ID"                             # 关闭 tab
-curl -s "http://localhost:3456/health"                                      # 查看状态（含 managedTabs 数量）
+curl.exe -s "http://localhost:3456/screenshot?target=ID&file=<ABSOLUTE_OUTPUT_PATH>"     # 截图
+curl.exe -s "http://localhost:3456/scroll?target=ID&direction=bottom"           # 滚动
+curl.exe -s "http://localhost:3456/close?target=ID"                             # 关闭 tab
+curl.exe -s "http://localhost:3456/health"                                      # 查看状态（含 managedTabs 数量）
 ```
 
 Proxy 会自动追踪通过 `/new` 创建的 tab，闲置 15 分钟后自动关闭，防止 Agent 异常退出时留下孤儿 tab。可通过环境变量 `CDP_TAB_IDLE_TIMEOUT`（单位毫秒）调整超时时间。

@@ -1,6 +1,6 @@
 # Conversion Tools
 
-> Architecture rationale (why native-Python first with pandoc fallback, why curl_cffi for TLS impersonation): see [docs/technical-design.md "Source Content Conversion"](../../../../docs/technical-design.md#source-content-conversion).
+> Architecture rationale (why native-Python first with pandoc fallback, why curl_cffi for TLS impersonation): see [docs/technical-design.md "Source Content Conversion"](../../docs/technical-design.md#source-content-conversion).
 
 Source conversion tools turn PDFs, documents, slide decks, and web pages into Markdown before project creation.
 
@@ -9,15 +9,15 @@ Source conversion tools turn PDFs, documents, slide decks, and web pages into Ma
 Recommended first choice for native PDFs.
 
 ```bash
-python3 scripts/source_to_md/pdf_to_md.py book.pdf
-python3 scripts/source_to_md/pdf_to_md.py book.pdf -o output.md
-python3 scripts/source_to_md/pdf_to_md.py ./pdfs
-python3 scripts/source_to_md/pdf_to_md.py ./pdfs -o ./markdown
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py book.pdf
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py book.pdf -o output.md
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py ./pdfs
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py ./pdfs -o ./markdown
 
 # Image extraction control (default: filtered)
-python3 scripts/source_to_md/pdf_to_md.py book.pdf --images filtered  # size/quality filters applied
-python3 scripts/source_to_md/pdf_to_md.py book.pdf --images all       # extract all images, no filtering
-python3 scripts/source_to_md/pdf_to_md.py book.pdf --images none      # skip all images (text only)
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py book.pdf --images filtered  # size/quality filters applied
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py book.pdf --images all       # extract all images, no filtering
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/pdf_to_md.py book.pdf --images none      # skip all images (text only)
 ```
 
 Use cases:
@@ -50,10 +50,10 @@ Pandoc fallback (only if you need these):
 - `.doc`, `.odt`, `.rtf`, `.tex`/`.latex`, `.rst`, `.org`, `.typ`
 
 ```bash
-python3 scripts/source_to_md/doc_to_md.py lecture.docx
-python3 scripts/source_to_md/doc_to_md.py lecture.docx -o output.md
-python3 scripts/source_to_md/doc_to_md.py notes.epub
-python3 scripts/source_to_md/doc_to_md.py paper.tex -o paper.md  # uses pandoc
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/doc_to_md.py lecture.docx
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/doc_to_md.py lecture.docx -o output.md
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/doc_to_md.py notes.epub
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/doc_to_md.py paper.tex -o paper.md  # uses pandoc
 ```
 
 Dependencies:
@@ -82,9 +82,9 @@ Unsupported by default:
 - `.xls` — resave as `.xlsx` first
 
 ```bash
-python3 scripts/source_to_md/excel_to_md.py report.xlsx
-python3 scripts/source_to_md/excel_to_md.py report.xlsx -o output.md
-python3 scripts/source_to_md/excel_to_md.py report.xlsm --max-rows 200 --max-cols 40
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/excel_to_md.py report.xlsx
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/excel_to_md.py report.xlsx -o output.md
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/excel_to_md.py report.xlsm --max-rows 200 --max-cols 40
 ```
 
 Behavior:
@@ -112,11 +112,11 @@ Supported formats include:
 - `.potx`, `.potm`
 
 ```bash
-python3 scripts/source_to_md/ppt_to_md.py sales_deck.pptx
-python3 scripts/source_to_md/ppt_to_md.py sales_deck.pptx -o output.md
-python3 scripts/source_to_md/ppt_to_md.py ./decks
-python3 scripts/source_to_md/ppt_to_md.py ./decks -o ./markdown
-python3 scripts/source_to_md/ppt_to_md.py template.ppsx -o notes/template.md
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/ppt_to_md.py sales_deck.pptx
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/ppt_to_md.py sales_deck.pptx -o output.md
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/ppt_to_md.py ./decks
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/ppt_to_md.py ./decks -o ./markdown
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/ppt_to_md.py template.ppsx -o notes/template.md
 ```
 
 Behavior:
@@ -138,10 +138,10 @@ Legacy `.ppt` is not parsed directly. Resave it as `.pptx` or export it to PDF f
 Convert web pages to Markdown and download images locally.
 
 ```bash
-python3 scripts/source_to_md/web_to_md.py https://example.com/article
-python3 scripts/source_to_md/web_to_md.py https://url1.com https://url2.com
-python3 scripts/source_to_md/web_to_md.py -f urls.txt
-python3 scripts/source_to_md/web_to_md.py https://example.com -o output.md
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/web_to_md.py https://example.com/article
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/web_to_md.py https://url1.com https://url2.com
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/web_to_md.py -f urls.txt
+"<PPT_PYTHON>" -X utf8 scripts/source_to_md/web_to_md.py https://example.com -o output.md
 ```
 
 When `curl_cffi` is installed (included in `requirements.txt`), this script
@@ -156,9 +156,9 @@ block Python's default TLS fingerprint. No extra flags needed. If
 Fix image EXIF orientation in downloaded or imported assets.
 
 ```bash
-python3 scripts/rotate_images.py auto projects/xxx_files
-python3 scripts/rotate_images.py gen projects/xxx_files
-python3 scripts/rotate_images.py fix fixes.json
+"<PPT_PYTHON>" -X utf8 scripts/rotate_images.py auto projects/xxx_files
+"<PPT_PYTHON>" -X utf8 scripts/rotate_images.py gen projects/xxx_files
+"<PPT_PYTHON>" -X utf8 scripts/rotate_images.py fix fixes.json
 ```
 
 Use this when extracted photos appear sideways after conversion or import.

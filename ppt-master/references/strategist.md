@@ -249,7 +249,7 @@ Formula rendering is part of Typography confirmation. Recommend one policy and l
 
 ```bash
 mkdir -p <project_path>/images
-python3 skills/ppt-master/scripts/latex_render.py <project_path>
+"<PPT_PYTHON>" -X utf8 skills/ppt-master/scripts/latex_render.py <project_path>
 ```
 
 Write the manifest first at `<project_path>/images/formula_manifest.json`. Use this shape:
@@ -331,7 +331,7 @@ After the candidates, append one line:
 | `Mood` line MUST include a real-world analogy | Company / publication / event the user can picture. Adjective stacks alone are forbidden. |
 | Adapt labels to chat language | Schema is English by default. Chinese chat → render as 「方案 A / 视觉 / 色彩 / 情绪」. Structure stays the same; only the labels translate. |
 | Skip presentation when user has specified | User-named rendering or palette (chat / brand / template) bypasses the candidate flow — lock directly per the truth-precedence rule. |
-| `custom` is a tail-case, not a default | When no preset fits, a candidate may set `rendering: custom` and / or `palette: custom` (rules: [`image-renderings/_index.md`](../image-renderings/_index.md) §1.5, [`image-palettes/_index.md`](../image-palettes/_index.md) §2). At most one candidate per dimension may carry `custom`; one candidate may carry both dimensions as `custom`. `Visual` / `Color` lines describe the behavior in prose, never by naming a competing preset. |
+| `custom` is a tail-case, not a default | When no preset fits, a candidate may set `rendering: custom` and / or `palette: custom` (rules: [`image-renderings/_index.md`](image-renderings/_index.md) §1.5, [`image-palettes/_index.md`](image-palettes/_index.md) §2). At most one candidate per dimension may carry `custom`; one candidate may carry both dimensions as `custom`. `Visual` / `Color` lines describe the behavior in prose, never by naming a competing preset. |
 
 **Forbidden — padding with conflicts**: if e.'s HEX cannot find ≥3 compatible palettes, present the smaller set (2 candidates) and state "your color is unusual — only N palettes can carry it without conflict." A `custom` candidate is allowed only when its prose genuinely describes a tail-case the presets cannot — not as a slot-filler. Never fill remaining slots with known-conflicting options.
 
@@ -450,7 +450,7 @@ After auto-selecting, cross-check `image-palettes/_index.md` compatibility matri
   - image_palette: cool-corporate
   ```
 
-**Hard rule — `custom` recording**: when the picked candidate has `rendering: custom` or `palette: custom`, also write the sibling `*_behavior` row. Source: the candidate's `Visual` line (for rendering) / `Color` line (for palette), expanded to cover the prose requirements in [`image-renderings/_index.md`](../image-renderings/_index.md) §1.5 / [`image-palettes/_index.md`](../image-palettes/_index.md) §2 (chat candidates are compressed; spec_lock prose covers all axes). Both `design_spec.md` and `spec_lock.md` must carry the behavior line. Example for the `custom × custom` candidate above:
+**Hard rule — `custom` recording**: when the picked candidate has `rendering: custom` or `palette: custom`, also write the sibling `*_behavior` row. Source: the candidate's `Visual` line (for rendering) / `Color` line (for palette), expanded to cover the prose requirements in [`image-renderings/_index.md`](image-renderings/_index.md) §1.5 / [`image-palettes/_index.md`](image-palettes/_index.md) §2 (chat candidates are compressed; spec_lock prose covers all axes). Both `design_spec.md` and `spec_lock.md` must carry the behavior line. Example for the `custom × custom` candidate above:
 
 ```
 - image_rendering: custom
@@ -465,7 +465,7 @@ Image_Generator reads these fields and applies them deck-wide. If both are absen
 
 After the user picks a candidate, scan the outline and surface any pages where the image makes more sense as the page's main voice than as a local block. Present them as a short list and let the user confirm, edit, or skip. Result is recorded as `page_role: hero_page` on the matching `ai` rows. Density is judgment-based — no fixed quota.
 
-**When selection includes B**, you must run `python3 scripts/analyze_images.py <project_path>/images` before outputting the spec, and integrate scan results into the image resource list.
+**When selection includes B**, you must run `"<PPT_PYTHON>" -X utf8 scripts/analyze_images.py <project_path>/images` before outputting the spec, and integrate scan results into the image resource list.
 
 **When B / C / D / E is selected**, add an image resource list to the spec:
 
@@ -749,7 +749,7 @@ Templates are starting points. The Strategist may adjust based on content and au
 Project folder must exist before Strategist runs. If not, execute:
 
 ```bash
-python3 scripts/project_manager.py init <project_name> --format <canvas_format>
+"<PPT_PYTHON>" -X utf8 scripts/project_manager.py init <project_name> --format <canvas_format>
 ```
 
 Save outputs to `projects/<project_name>_<format>_<YYYYMMDD>/design_spec.md`.
