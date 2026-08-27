@@ -1,0 +1,11 @@
+interface:
+  display_name: "Wave MCP"
+  short_description: "Debug RTL waveforms and static netlists with wave-mcp"
+  default_prompt: "Use $wave-mcp to diagnose this RTL waveform or analyze this SystemVerilog design."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "wave-mcp"
+      description: "Local wave-mcp server for RTL waveform and netlist analysis"
+      transport: "stdio"

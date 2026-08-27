@@ -59,6 +59,7 @@ Synced on 2026-08-27.
 - `to-prd`
 - `traversing-citations`
 - `triage`
+- `wave-mcp`
 - `web-access`
 - `write-a-skill`
 - `zoom-out`
