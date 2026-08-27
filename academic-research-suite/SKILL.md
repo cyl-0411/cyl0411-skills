@@ -1,13 +1,10 @@
 ---
 name: academic-research-suite
-description: >
-  Use the ARS-Codex framework for methodical academic research and multi-stage
-  research-to-paper work, including deep or systematic literature reviews,
-  meta-analysis, research-question refinement, general academic drafting and
-  revision, peer-review simulation, experiment planning, statistical
-  interpretation, and study protocols. Trigger for explicit ARS or ars-* requests,
-  or when a task spans several research stages. For a single Nature-specific
-  deliverable, use the matching nature-* skill instead.
+description: >-
+  Use ARS-Codex for academic workflows spanning multiple stages, such as literature review,
+  question refinement, analysis, drafting, and peer review. Trigger for explicit ARS/ars-*
+  requests or multi-stage research-to-paper work; use the matching nature-* skill for one
+  Nature-specific deliverable.
 metadata:
   version: "0.1.28"
   upstream_suite: "academic-research-skills"

@@ -1,7 +1,9 @@
 ---
 name: nature-figure
 description: >-
-  Submission-grade Nature/high-impact journal figure workflow for Python or R. Use whenever the user asks to create, revise, audit, or polish manuscript figures, multi-panel scientific plots, figures4papers-style matplotlib plots, or journal-ready SVG/PDF/TIFF outputs, especially for Nature-family or other high-impact journals. Before plotting, define the figure's conclusion, evidence logic, export needs, and review risks. If the user has not chosen Python or R, ask "Python or R?" and stop. Use only the selected backend for figure generation, previewing, exporting, and QA. Supports matplotlib/seaborn and ggplot2/patchwork/ComplexHeatmap. Not for dashboards or Illustrator/Figma-first infographics.
+  Create, revise, or audit submission-grade scientific figures for Nature/high-impact journals using
+  Python or R, with export and visual QA. Ask "Python or R?" if unspecified. Not for dashboards or
+  Illustrator/Figma-first graphics.
 ---
 
 # Nature Figure Making Skill

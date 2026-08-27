@@ -1,6 +1,6 @@
 ---
 name: ralph-autonomous-development
-description: "Run a repository-local Ralph-style autonomous development workflow: harden requirements, create a PRD and prd.json, configure Ralph handoff files, launch one-story-per-iteration agent loops, supervise progress, validate, and finish safely. Use when the user asks to set up, explain, run, or repair Ralph autonomous development."
+description: Set up, run, supervise, or repair a repository-local Ralph autonomous-development loop from requirements through PRD/prd.json, story iterations, validation, and handoff.
 ---
 
 # Ralph Autonomous Development

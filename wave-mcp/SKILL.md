@@ -1,6 +1,6 @@
 ---
 name: wave-mcp
-description: Debug Verilog/SystemVerilog designs with the wave-mcp MCP server using FST/VCD waveform queries, RTL hierarchy and connectivity analysis, driver/fan-in inspection, value tracing, and X-state root-cause tracing. Use for RTL waveform debugging, pre-simulation static analysis, or diagnosing a failing simulation. Do not use for analog waveforms or FSDB-only inputs.
+description: Debug Verilog/SystemVerilog with wave-mcp using FST/VCD waveforms, hierarchy/connectivity, driver/fan-in, value tracing, and X-state analysis. Not for analog waveforms or FSDB-only inputs.
 metadata:
   version: "0.1.0"
   upstream: "Tencent/wave-mcp@0.1.1"

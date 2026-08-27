@@ -1,6 +1,6 @@
 ---
 name: innovus-command-lookup
-description: Look up the exact syntax, options, defaults, and short usage examples of named Cadence Innovus Tcl commands in the local Innovus Text Command Reference. Use when the user asks what a specific Innovus command or option means, or explicitly asks to search the local command manual. Do not use for diagnosing PnR failures, timing, CTS, routing, DRC, Tcl script bugs, or broader flow problems; use digital-ic-backend-debug for those tasks.
+description: Look up exact syntax, options, defaults, and short examples for a named Innovus Tcl command in the local reference. Use digital-ic-backend-debug for flow failures, violations, or broader PnR diagnosis.
 ---
 
 # Innovus Command Lookup

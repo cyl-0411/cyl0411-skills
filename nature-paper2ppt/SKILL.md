@@ -1,6 +1,6 @@
 ---
 name: nature-paper2ppt
-description: Build a complete but efficient Nature-style Chinese PPTX presentation from a scientific paper, preprint, PDF, article text, abstract, figure legends, or reading notes. Use this skill whenever the user asks to make slides/PPT/PPTX for journal club, group meeting, paper sharing, thesis seminar, lab meeting, department report, or academic presentation from a research paper, not only medical papers. It identifies the paper type and argument, selects only the figures needed for the story, writes Chinese slide content and speaker notes, creates the actual .pptx deck, and runs an explicit self-review/corrective revision loop focused on figure quality, text overflow prevention, and non-template visual design before delivery.
+description: Create and self-review a Chinese PPTX from a scientific paper for journal clubs, group meetings, or academic talks, selecting story-critical figures and adding speaker notes. Use presentations for ordinary decks; honor explicit ppt-master requests.
 ---
 
 # Purpose

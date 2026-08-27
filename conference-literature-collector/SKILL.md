@@ -1,7 +1,9 @@
 ---
 name: conference-literature-collector
 description: >-
-  Collect proceedings literature for any named conference, workshop, symposium, venue, or year range. Build normalized metadata from official programs and bibliographic sources, download authorized PDFs through an isolated task browser, record missing papers, apply optional topic screening, and produce local archives and research reports. Use for single- or multi-venue conference paper collection, full-text acquisition, metadata cleanup, topic-focused screening, and year-organized proceedings libraries.
+  Collect and normalize proceedings literature for named conferences, workshops, venues, or
+  year ranges, with authorized PDF acquisition, missing-paper tracking, optional topic screening,
+  and local archives.
 ---
 
 # Conference Literature Collector

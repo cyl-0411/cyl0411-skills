@@ -1,6 +1,6 @@
 ---
 name: digital-ic-backend-debug
-description: Diagnose digital IC backend implementation problems by searching the local IC Backend Wiki, Innovus flow command notes, and Innovus Text Command Reference. Use when users report or ask about PnR, Innovus, ICC2, PrimeTime, StarRC, Calibre, RedHawk, timing, CTS, routing, floorplan, powerplan, IR/EM, DRC/LVS, ECO, Tcl script, command usage, error code, violation rule, or backend flow debug issues and need evidence-backed troubleshooting ideas plus manual-confirmed Innovus commands.
+description: Diagnose digital IC backend/PnR issues using local wiki, flow notes, and manuals. Use for timing, CTS, routing, floorplan, power, IR/EM, DRC/LVS, ECO, tool errors, or Tcl failures; use innovus-command-lookup for one named command's syntax.
 ---
 
 # Digital IC Backend Debug

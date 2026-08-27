@@ -1,6 +1,6 @@
 ---
 name: prd
-description: "Create and save a local Markdown PRD for a feature or product idea, asking only essential clarifying questions when requirements are ambiguous. Use when the user asks to plan or specify a feature or create a PRD file without publishing it externally. Do not implement the feature. If the requested outcome is an issue-tracker PRD, use to-prd."
+description: Create and save a local Markdown PRD for a product or feature without implementing it. Use to-prd only when the user explicitly wants publication to an issue tracker.
 ---
 
 # PRD Generator

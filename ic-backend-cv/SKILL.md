@@ -1,6 +1,6 @@
 ---
 name: ic-backend-cv
-description: Review, revise, compress, and version Chinese CV/resume content for digital IC backend roles. Use when working on semiconductor CVs that mention Netlist-to-GDSII, PnR, STA, DRC/LVS, IR Drop, PG connectivity, Power Plan/Power Planning, ASIC tapeout, chip testing, EDA tools, internship/project sections, paper results, or when the user asks to make CV wording accurate, concise, professional, realistic, consistently formatted, or commit large CV revisions.
+description: Revise and version Chinese resumes for digital IC backend roles, keeping PnR/STA/DRC/LVS/IR/EM, tapeout, EDA, project, and chip-test claims accurate, concise, professional, and realistic.
 ---
 
 # IC Backend CV

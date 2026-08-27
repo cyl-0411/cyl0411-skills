@@ -1,6 +1,6 @@
 ---
 name: digital-ic-presim
-description: Plan, build, run, and review digital IC RTL pre-simulation testbenches with reproducible logs and waveforms. Use when working on RTL front-end simulation, Verilog/SystemVerilog testbenches, SoC/IP smoke tests, VCS/WSL simulation runs, waveform review, or simulation result collection.
+description: Build, run, and review reproducible RTL pre-simulation testbenches, logs, and waveforms for Verilog/SystemVerilog, SoC/IP smoke tests, or VCS/WSL flows; use wave-mcp for focused FST/VCD signal tracing.
 ---
 
 # Digital IC Pre-Simulation

@@ -1,6 +1,6 @@
 ---
 name: read-qec-paper
-description: 用于阅读量子纠错(QEC)领域论文，尤其是解码器、硬件实现、硬件算法协同、噪声建模相关文献；当需要从单篇论文中提取并整理算法的LER、时间空间复杂度、核心优势、硬件实现平台（FPGA、ASIC、工艺节点）、资源或存储消耗、功耗频率/延迟/吞吐等性能指标，以及噪声模型构建方式，并输出为结构化Markdown 笔记和末尾总结表格时使用。仅当用户需要 QEC 论文的结构化指标抽取笔记时触发；若用户要的是全文双语对照翻译/通读稿，改用 nature-reader。
+description: 阅读单篇量子纠错（QEC）论文并提取解码算法、LER、复杂度、硬件平台/工艺、资源、功耗、频率、延迟、吞吐和噪声模型，输出结构化 Markdown 指标笔记。全文双语翻译或通读改用 nature-reader。
 ---
 
 # Read QEC Paper
@@ -118,5 +118,4 @@ description: 用于阅读量子纠错(QEC)领域论文，尤其是解码器、�
   - `Idle`: `p/10`
   - `ResonatorIdle` or idle during measurement/reset windows: `2p`
 - When reading or summarizing code, make it explicit whether a local variable such as `pos` corresponds to the SI1000 base rate or to one of the derived channel rates.
-
 

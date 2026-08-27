@@ -1,6 +1,6 @@
 ---
 name: qsnare-closed-loop
-description: Run Q-SNARE model evaluation through a closed loop of model metrics, QEC simulation, PyMatching decoding, feedback, cleanup, and git handoff. Use when working on Q-Whisperer/Q-SNARE training runs, noise-model adjustment, closed-loop LER validation, aggressive noise injection, or deciding whether a model iteration is good enough to commit and push.
+description: Run Q-SNARE/Q-Whisperer evaluation through metrics, QEC simulation, PyMatching decoding, feedback, cleanup, and git handoff. Use for closed-loop LER validation or iteration acceptance.
 ---
 
 # Q-SNARE Closed Loop

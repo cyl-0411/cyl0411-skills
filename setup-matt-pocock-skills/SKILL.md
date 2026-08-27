@@ -1,6 +1,6 @@
 ---
 name: setup-matt-pocock-skills
-description: Configure repository-local issue-tracker, triage-label, and domain-document conventions in AGENTS.md or CLAUDE.md plus docs/agents/. Use before to-issues, to-prd, triage, diagnose, tdd, or improve-codebase-architecture when those skills lack repository context.
+description: Configure repository-local issue-tracker, triage-label, and domain-document conventions in AGENTS.md/CLAUDE.md and docs/agents/ when workflow skills lack project context.
 ---
 
 # Setup Matt Pocock's Skills

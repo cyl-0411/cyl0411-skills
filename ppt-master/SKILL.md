@@ -1,12 +1,9 @@
 ---
 name: ppt-master
-description: >
-  Build decks with ppt-master's source-to-SVG-to-PPTX pipeline, including template
-  or brand reuse, live preview, SVG quality checks, and export. Use when the user
-  explicitly names ppt-master, requests an SVG-first deck, or wants PDF, DOCX, URL,
-  or Markdown converted through this pipeline. For ordinary PowerPoint creation or
-  editing use presentations; for a scientific-paper presentation use
-  nature-paper2ppt, unless the user explicitly selects ppt-master.
+description: >-
+  Build decks through ppt-master's source-to-SVG-to-PPTX pipeline with template/brand reuse,
+  preview, and SVG QA. Trigger when explicitly named or SVG-first conversion is requested; use
+  nature-paper2ppt for scientific-paper talks.
 ---
 
 # PPT Master Skill

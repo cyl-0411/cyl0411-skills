@@ -1,12 +1,8 @@
 ---
 name: nature-data
 description: >-
-  Prepare, audit, or revise Nature-ready Data Availability statements, data repository plans,
-  dataset citations, and FAIR metadata checklists for manuscripts. Use when the user asks about
-  Nature data availability, research data sharing, repository selection, accession numbers,
-  restricted or sensitive data, source data, supplementary datasets, DataCite-style dataset
-  references, FAIR metadata for academic publication, or Chinese-to-English data availability
-  wording for Chinese-speaking authors preparing Nature-family submissions.
+  Prepare or audit Nature-ready Data Availability statements, repository plans, dataset citations,
+  accession and restriction wording, and FAIR metadata for manuscripts.
 ---
 
 # Nature Data Availability Skill
